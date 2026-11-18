@@ -310,10 +310,10 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     <h2 id="winTitle">¡Ganaron el mes!</h2>
     <p class="wintons" id="winTons">1.000 t</p>
     <div class="boss">
-      <div class="avatar" id="winAvatar">CD</div>
+      <div class="avatar" id="winAvatar">LP</div>
       <div class="bubble">
         <p id="winQuote">¡Excelente trabajo, equipo!!!</p>
-        <span>Carlos Delgadillo</span>
+        <span>Lorena Giorgina Pinto</span>
       </div>
     </div>
     <button class="btn primary" id="winBtn">Ver resultados</button>
@@ -1093,7 +1093,7 @@ function celebrate(win){
     d.style.animationDuration=(2.2+Math.random()*2.4)+"s"; d.style.animationDelay=(Math.random()*1.2)+"s";
     c.appendChild(d);
   }
-  if(IMG.carlos) $("winAvatar").innerHTML=`<img src="${IMG.carlos}" alt="Carlos Delgadillo">`;
+  if(IMG.lorena) $("winAvatar").innerHTML=`<img src="${IMG.lorena}" alt="Lorena Giorgina Pinto">`;
   $("winEyebrow").textContent = win ? "Meta del mes cumplida" : "Fin del mes";
   $("winTitle").textContent = win ? "¡Ganaron el mes!" : "¡Buen trabajo!";
   $("winQuote").textContent = win ? "¡Excelente trabajo, equipo!!!" : "¡Bien hecho, equipo! Estuvieron cerca de la meta.";
