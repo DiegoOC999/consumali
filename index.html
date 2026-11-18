@@ -461,105 +461,138 @@ const META = 1000, TONS = 100, PENALTY = 50, MAX_Q = 20, CALC_SECS = 30, HARD_AT
 
 // Etiquetas de cada categoría o marca (casillas del tablero)
 const CATS = {
-  lejia:    {lab:"Lejía", tag:"PVP Bs 13",            img:"h2_5",  cls:"sapolio", chip:"#F08A24"},
-  lava:     {lab:"Lavavajillas", tag:"PVP Bs 16",     img:"h4_3",  cls:"sapolio", chip:"#F08A24"},
-  limpia:   {lab:"Limpia Todo", tag:"PVP Bs 15",      img:"h6_11", cls:"sapolio", chip:"#F08A24"},
-  ambi:     {lab:"Ambient. e Insect.", tag:"PVP Bs 16", img:"h8_5", cls:"sapolio", chip:"#F08A24"},
-  bolivar:  {lab:"Bolívar", tag:"T1 · PVP Bs 21",          img:"s3_8",  cls:"deter",   chip:"#3E6FD1", fg:"#FFF6EA"},
-  opal:     {lab:"Opal", tag:"T2 · PVP Bs 17",             img:"s5_4",  cls:"deter",   chip:"#8E68D6", fg:"#FFF6EA"},
-  uno:      {lab:"UNO", tag:"T3 · PVP Bs 14",              img:"s6_5",  cls:"deter",   chip:"#EE8FAE"},
-  patito:   {lab:"Patito", tag:"T4 · PVP Bs 14",           img:"s8_5",  cls:"deter",   chip:"#7FD39A"},
-  finoc:    {lab:"Fino Clásico", tag:"PVP Bs 18,50",     img:"f4_9",  cls:"foods",   chip:"#3E9B4F", fg:"#FFF6EA"},
-  finol:    {lab:"Fino Light", tag:"PVP Bs 24",       img:"f2_3",  cls:"foods",   chip:"#2C5E8E", fg:"#FFF6EA"},
-  pastas:   {lab:"Don Vittorio Pastas", tag:"PVP Bs 9", img:"f10_3", cls:"foods", chip:"#C9962E"},
-  salsas:   {lab:"Don Vittorio Salsas", tag:"PVP Bs 9", img:"f13_1", cls:"foods", chip:"#B8322B", fg:"#FFF6EA"},
-  conservas:{lab:"Sabrosa Conservas", tag:"PVP Bs 23",img:"f16_3", cls:"foods",   chip:"#E58A2B"},
+  lejia:    {lab:"Lejía", tag:"1 L · PVP Bs 13",            img:"h2_0",  cls:"sapolio", chip:"#F08A24"},
+  lava:     {lab:"Lavavajillas", tag:"1,25 L · PVP Bs 20",     img:"h4_3",  cls:"sapolio", chip:"#F08A24"},
+  limpia:   {lab:"Limpia Todo", tag:"4,9 L · PVP Bs 60",      img:"h6_11", cls:"sapolio", chip:"#F08A24"},
+  ambi:     {lab:"Ambient. e Insect.", tag:"360 ml · PVP Bs 16", img:"h8_5", cls:"sapolio", chip:"#F08A24"},
+  bolivar:  {lab:"Bolívar", tag:"T1 · 2 kg · PVP Bs 47",          img:"s3_8",  cls:"deter",   chip:"#3E6FD1", fg:"#FFF6EA"},
+  opal:     {lab:"Opal", tag:"T2 · 1,8 kg · PVP Bs 42",             img:"s5_4",  cls:"deter",   chip:"#8E68D6", fg:"#FFF6EA"},
+  uno:      {lab:"UNO", tag:"T3 · 620 g · PVP Bs 14",              img:"s6_5",  cls:"deter",   chip:"#EE8FAE"},
+  patito:   {lab:"Patito", tag:"T4 · 500 g · PVP Bs 9",           img:"s8_6",  cls:"deter",   chip:"#7FD39A"},
+  finoc:    {lab:"Fino Clásico", tag:"4,5 L · PVP Bs 92,50",     img:"f4_8",  cls:"foods",   chip:"#3E9B4F", fg:"#FFF6EA"},
+  finol:    {lab:"Fino Light", tag:"1,8 L · PVP Bs 46",       img:"f5_4",  cls:"foods",   chip:"#2C5E8E", fg:"#FFF6EA"},
+  pastas:   {lab:"Don Vittorio Pastas", tag:"400 g · PVP Bs 9", img:"f10_3", cls:"foods", chip:"#C9962E"},
+  salsas:   {lab:"Don Vittorio Salsas", tag:"200 g · PVP Bs 9", img:"f13_1", cls:"foods", chip:"#B8322B", fg:"#FFF6EA"},
+  conservas:{lab:"Sabrosa Conservas", tag:"Tarro · PVP Bs 23",img:"f16_3", cls:"foods",   chip:"#E58A2B"},
   gestion:  {lab:"Gestión", tag:"",          ic:"chart",  cls:"gestion", chip:"#2FB5BE"}
 };
 
-// Preguntas: precios y datos del portafolio. El primer elemento de "o" es el correcto. x = segundos extra. m = quiebra de la categoría si fallan.
+// Preguntas: cada dato sale de las capacitaciones (HHC 2026, Detergentes, Foods) o del Price List Trad. Dex 01.10 (hoja Precios SKU).
+// Foto solo si muestra el mismo producto y formato; si no, ícono de la categoría. El primer elemento de "o" es el correcto.
 const QUESTIONS = {
   lejia: [
     {img:"h2_0", m:1, q:"El cliente compra la caja de 12 lejías de 1 L a Bs 132 y vende cada una a Bs 13. ¿Cuánto gana por unidad?", o:["Bs 2","Bs 1","Bs 3","Bs 13"], e:"Bs 132 ÷ 12 = Bs 11. Vende a Bs 13: gana Bs 2."},
     {img:"h2_5", m:1, q:"La caja de 4 lejías de 4,7 L le cuesta Bs 172 al cliente y el PVP es Bs 47. ¿Cuánto gana por unidad?", o:["Bs 4","Bs 3","Bs 5","Bs 2"], e:"Bs 172 ÷ 4 = Bs 43. Bs 47 − Bs 43 = Bs 4."},
-    {img:"h2_5", m:1, q:"¿Qué lejía sale más barata por litro: la de 1 L a Bs 13 o la de 4,7 L a Bs 47?", o:["La de 4,7 L (≈Bs 10 el litro)","La de 1 L (Bs 13 el litro)","Salen igual","No se puede saber"], e:"Bs 47 ÷ 4,7 L = Bs 10 por litro, frente a Bs 13 en el formato de 1 L."},
-    {img:"h2_1", m:1, q:"Un cliente compra 2 cajas de lejía de 1 L a Bs 132 cada caja. ¿Cuánto paga?", o:["Bs 264","Bs 132","Bs 312","Bs 254"], e:"2 × Bs 132 = Bs 264."},
-    {img:"h2_1", q:"¿Qué concentración de hipoclorito de sodio tiene la lejía Sapolio?", o:["5,9%","4%","4,5%","7,5%"], e:"5,9%: la más concentrada de Bolivia."}
+    {ic:"tag", m:1, q:"¿Qué lejía sale más barata por litro: la de 1 L a Bs 13 o la de 4,7 L a Bs 47?", o:["La de 4,7 L (Bs 10 el litro)","La de 1 L (Bs 13 el litro)","Salen igual","No se puede saber"], e:"Bs 47 ÷ 4,7 L = Bs 10 por litro, frente a Bs 13 en el formato de 1 L."},
+    {img:"h2_0", q:"¿Qué concentración de hipoclorito de sodio tiene la lejía Sapolio?", o:["5,9%","4%","4,5%","7,5%"], e:"5,9%: la más concentrada de Bolivia."},
+    {img:"h2_0", q:"¿Cuántas lejías Sapolio de 1 L trae una caja?", o:["12","6","24","4"], e:"Lejía 1 L: caja de 12 unidades."},
+    {img:"h2_1", m:1, q:"Lejía 1,8 L: el cliente la compra a Bs 21,10 y la vende a Bs 24. ¿Cuánto gana?", o:["Bs 2,90","Bs 3,10","Bs 1,90","Bs 2,10"], e:"Bs 24 − Bs 21,10 = Bs 2,90."},
+    {img:"h2_2", q:"¿Cuál es el PVP de la lejía Sapolio de 3,8 L?", o:["Bs 40","Bs 47","Bs 37","Bs 35"], e:"Lejía: 1 L Bs 13 · 1,8 L Bs 24 · 3,8 L Bs 40 · 4,7 L Bs 47."},
+    {ic:"chart", q:"¿Qué porcentaje de hongos, virus y bacterias elimina la lejía Sapolio?", o:["99,9%","90%","95%","99%"], e:"Poder de desinfección: elimina el 99,9% de hongos, virus y bacterias."}
   ],
   lava: [
-    {img:"h4_0", m:1, q:"El cliente compra el lavavajillas de 750 ml a Bs 13,10 y lo vende a Bs 16. ¿Cuánto gana?", o:["Bs 2,90","Bs 3,10","Bs 1,90","Bs 3,90"], e:"Bs 16 − Bs 13,10 = Bs 2,90."},
-    {img:"h4_3", q:"El lavavajillas de 750 ml trae “+200 ml gratis”. ¿Cuánto producto se lleva el consumidor?", o:["950 ml","800 ml","1 L","750 ml"], e:"750 ml + 200 ml = 950 ml por el mismo precio."},
-    {img:"h4_1", m:1, q:"El lavavajillas de 5 L cuesta Bs 65. ¿Cuánto cuesta cada litro?", o:["Bs 13","Bs 15","Bs 11","Bs 16"], e:"Bs 65 ÷ 5 L = Bs 13 por litro."},
-    {img:"h4_3", m:1, q:"¿Qué sale más barato por litro: el lavavajillas de 750 ml a Bs 16 o el de 5 L a Bs 65?", o:["El de 5 L","El de 750 ml","Salen igual","No se puede saber"], e:"5 L: Bs 13 por litro. 750 ml: ≈Bs 21 por litro."}
+    {ic:"money", m:1, q:"El cliente compra el lavavajillas líquido de 750 ml a Bs 13,10 y lo vende a Bs 16. ¿Cuánto gana?", o:["Bs 2,90","Bs 3,10","Bs 1,90","Bs 3,90"], e:"Bs 16 − Bs 13,10 = Bs 2,90."},
+    {img:"h4_1", m:1, q:"El lavavajillas de 5 L tiene PVP de Bs 65. ¿Cuánto cuesta cada litro?", o:["Bs 13","Bs 15","Bs 11","Bs 16"], e:"Bs 65 ÷ 5 L = Bs 13 por litro."},
+    {ic:"tag", m:1, q:"¿Qué sale más barato por litro: el lavavajillas de 750 ml a Bs 16 o el de 5 L a Bs 65?", o:["El de 5 L","El de 750 ml","Salen igual","No se puede saber"], e:"5 L: Bs 13 por litro. 750 ml: ≈Bs 21 por litro."},
+    {img:"h4_3", q:"¿Cuál es el PVP del lavavajillas líquido Sapolio de 1,25 L?", o:["Bs 20","Bs 16","Bs 24","Bs 65"], e:"Líquido: 500 ml Bs 11 · 750 ml Bs 16 · 1,25 L Bs 20 · 5 L Bs 65."},
+    {ic:"box", q:"¿Cuántas unidades trae la caja del lavavajillas en crema de 1 kg?", o:["6","12","4","24"], e:"Lavavajillas crema 1 kg: caja de 6."},
+    {ic:"tag", q:"¿Cuál es el PVP del lavavajillas líquido Sapolio de 500 ml?", o:["Bs 11","Bs 13","Bs 9","Bs 16"], e:"Lavavajillas 500 ml: PVP Bs 11."},
+    {img:"h4_0", q:"¿Cuántos lavavajillas de 5 L trae una caja?", o:["4","6","12","2"], e:"Lavavajillas 5 L: caja de 4."}
   ],
   limpia: [
-    {img:"h6_11", m:1, q:"El cliente compra el Limpia Todo de 900 ml a Bs 11,92 y lo vende a Bs 15. ¿Cuánto gana?", o:["≈Bs 3","≈Bs 2","≈Bs 4","≈Bs 1"], e:"Bs 15 − Bs 11,92 = Bs 3,08."},
-    {img:"h6_14", m:1, q:"¿Qué Limpia Todo sale más barato por litro: el de 900 ml a Bs 15 o el de 4,9 L a Bs 60?", o:["El de 4,9 L","El de 900 ml","Salen igual","No se puede saber"], e:"4,9 L: ≈Bs 12 por litro. 900 ml: ≈Bs 17 por litro."},
-    {img:"h6_14", q:"Una caja trae 12 Limpia Todo de 900 ml. ¿Cuántos litros hay en la caja?", o:["10,8 L","9 L","12 L","108 L"], e:"12 × 0,9 L = 10,8 L."},
-    {img:"h6_11", q:"¿Hasta cuántas horas dura la fragancia del Limpia Todo con Maxifragancia?", o:["12 horas","6 horas","8 horas","24 horas"], e:"Tecnología Maxifragancia: hasta 12 horas."}
+    {ic:"money", m:1, q:"El cliente compra el Limpia Todo de 900 ml a Bs 11,92 y lo vende a Bs 15. ¿Cuánto gana?", o:["≈Bs 3","≈Bs 2","≈Bs 4","≈Bs 1"], e:"Bs 15 − Bs 11,92 = Bs 3,08."},
+    {ic:"tag", m:1, q:"¿Qué Limpia Todo sale más barato por litro: el de 900 ml a Bs 15 o el de 4,9 L a Bs 60?", o:["El de 4,9 L","El de 900 ml","Salen igual","No se puede saber"], e:"4,9 L: ≈Bs 12 por litro. 900 ml: ≈Bs 17 por litro."},
+    {ic:"box", q:"Una caja trae 12 Limpia Todo de 900 ml. ¿Cuántos litros hay en la caja?", o:["10,8 L","9 L","12 L","108 L"], e:"12 × 0,9 L = 10,8 L."},
+    {img:"h6_14", q:"¿Hasta cuántas horas dura la fragancia del Limpia Todo con Maxifragancia?", o:["12 horas","6 horas","8 horas","24 horas"], e:"Tecnología Maxifragancia: hasta 12 horas de fragancia."},
+    {ic:"money", m:1, q:"Limpia Todo 1,8 L: el cliente lo compra a Bs 21,73 y lo vende a Bs 25. ¿Cuánto gana?", o:["≈Bs 3,30","≈Bs 2,30","≈Bs 4,30","≈Bs 1,30"], e:"Bs 25 − Bs 21,73 = Bs 3,27."},
+    {img:"h6_11", q:"¿Cuál es el PVP del Limpia Todo de 4,9 L?", o:["Bs 60","Bs 53","Bs 65","Bs 75"], e:"Limpia Todo: 900 ml Bs 15 · 1,8 L Bs 25 · 4,9 L Bs 60."}
   ],
   ambi: [
     {img:"h8_5", m:1, q:"El cliente compra el ambientador a Bs 14 y lo vende a Bs 16. ¿Cuánto gana por unidad?", o:["Bs 2","Bs 1","Bs 3","Bs 14"], e:"Bs 16 − Bs 14 = Bs 2."},
     {img:"h8_7", m:1, q:"Una caja trae 12 ambientadores a Bs 14 cada uno. ¿Cuánto cuesta la caja?", o:["Bs 168","Bs 140","Bs 192","Bs 156"], e:"12 × Bs 14 = Bs 168."},
-    {img:"h8_5", q:"¿Cuántos aromas tiene el ambientador Sapolio?", o:["8","5","6","10"], e:"Lavanda, Potpourrí, Jardín de rosas, Arrullos de bebé, Vainilla, Antitabaco, Coco tropical y Melón."},
-    {img:"h10_2", m:1, q:"El cliente compra el insecticida a Bs 14,20 y lo vende a Bs 17. ¿Cuánto gana?", o:["Bs 2,80","Bs 3,20","Bs 1,80","Bs 3,80"], e:"Bs 17 − Bs 14,20 = Bs 2,80."},
-    {img:"h10_4", q:"El Matamoscas Sapolio es efectivo contra el mosquito que transmite…", o:["El dengue","La gripe","La varicela","El sarampión"], e:"Mata mosquitos 30% más rápido y es efectivo contra el transmisor del dengue."}
+    {img:"h8_5", q:"¿Cuántos aromas tiene el ambientador Sapolio?", o:["8","5","6","10"], e:"Lavanda, Potpourrí de flores, Jardín de rosas, Arrullos de bebé, Vainilla, Antitabaco, Coco tropical y Melón."},
+    {img:"h10_6", m:1, q:"El cliente compra el insecticida Mata Todo a Bs 14,20 y lo vende a Bs 17. ¿Cuánto gana?", o:["Bs 2,80","Bs 3,20","Bs 1,80","Bs 3,80"], e:"Bs 17 − Bs 14,20 = Bs 2,80."},
+    {img:"h10_4", q:"El Matamoscas Sapolio es efectivo contra el mosquito transmisor de…", o:["Dengue, malaria y chikungunya","Gripe y resfrío","Varicela","Sarampión"], e:"Mata mosquitos 30% más rápido; efectivo contra el transmisor de dengue, malaria y chikungunya."},
+    {img:"h8_7", q:"¿Cuánto contenido trae el ambientador Sapolio?", o:["360 ml","250 ml","500 ml","400 ml"], e:"Ambientador Sapolio: 360 ml, caja de 12."}
   ],
   bolivar: [
     {img:"s3_8", q:"¿Cuál NO es un formato de Bolívar Cuidado Total en polvo?", o:["1 kg","700 g","2 kg","3,8 kg"], e:"Cuidado Total: 700 g, 2 kg y 3,8 kg."},
-    {img:"s3_4", q:"¿En qué formatos viene Bolívar Bebé y Niños?", o:["730 g y 1,5 kg","500 g y 1 kg","700 g y 2 kg","1 kg y 3 kg"], e:"Bebé y Niños: 730 g y 1,5 kg."},
-    {img:"s3_8", m:1, q:"Bolívar 700 g: el cliente lo compra a Bs 18,14 y lo vende a Bs 21. ¿Cuánto gana?", o:["Bs 2,86","Bs 3,14","Bs 1,86","Bs 2,14"], e:"Bs 21 − Bs 18,14 = Bs 2,86."},
-    {img:"s3_8", q:"¿Cuál es el formato más pequeño del suavizante Bolívar?", o:["80 ml","250 ml","500 ml","1 L"], e:"Suavizante: 80 ml, 1,5 L, 2,8 L y 4,7 L."},
-    {img:"s3_8", q:"¿En qué segmento juega Bolívar?", o:["T1","T2","T3","T4"], e:"Bolívar T1, Opal T2, UNO T3 y Patito T4."}
+    {ic:"money", m:1, q:"Bolívar 700 g: el cliente lo compra a Bs 18,14 y lo vende a Bs 21. ¿Cuánto gana?", o:["Bs 2,86","Bs 3,14","Bs 1,86","Bs 2,14"], e:"Bs 21 − Bs 18,14 = Bs 2,86."},
+    {ic:"chart", q:"¿Cuál es el formato más pequeño del suavizante Bolívar?", o:["80 ml","250 ml","500 ml","1 L"], e:"Suavizante: 80 ml, 1,5 L, 2,8 L y 4,7 L."},
+    {ic:"chart", q:"¿En qué segmento juega Bolívar?", o:["T1","T2","T3","T4"], e:"Bolívar T1 (cuidado), Opal T2, UNO T3 y Patito T4."},
+    {img:"s3_8", q:"¿Cuál es el PVP de Bolívar Cuidado Total de 2 kg?", o:["Bs 47","Bs 42","Bs 52","Bs 38"], e:"Bolívar: 700 g Bs 21 · 2 kg Bs 47 · 3,8 kg Bs 78."},
+    {ic:"money", m:1, q:"Bolívar 3,8 kg: el cliente lo compra a Bs 71,70 y lo vende a Bs 78. ¿Cuánto gana?", o:["Bs 6,30","Bs 7,30","Bs 5,70","Bs 8,30"], e:"Bs 78 − Bs 71,70 = Bs 6,30."},
+    {ic:"tag", q:"Bolívar líquido: frasco de 1,9 L a Bs 63 y Doy Pack de 3 L a Bs 85. ¿Cuántos bolivianos más cuesta el Doy Pack?", o:["Bs 22","Bs 12","Bs 32","Bs 20"], e:"Bs 85 − Bs 63 = Bs 22, por 1,1 L más de producto."},
+    {img:"s3_3", q:"¿Cuál es el PVP del jabón de lavar Bolívar de 190 g?", o:["Bs 7","Bs 6","Bs 5","Bs 9"], e:"Jabón Bolívar 190 g: PVP Bs 7, caja de 48 barras."},
+    {img:"s3_4", m:1, q:"Bolívar Bebés y Niños 1,5 kg: el cliente lo compra a Bs 38,37 y lo vende a Bs 42. ¿Cuánto gana?", o:["Bs 3,63","Bs 4,37","Bs 2,63","Bs 3,37"], e:"Bs 42 − Bs 38,37 = Bs 3,63."}
   ],
   opal: [
     {img:"s5_5", q:"¿Cuál es el formato más grande de Opal Ultra?", o:["3,5 kg","1,8 kg","4,7 kg","5 kg"], e:"Opal Ultra: 650 g, 1,8 kg y 3,5 kg."},
-    {img:"s5_4", q:"¿Cuál es el formato más pequeño de Opal en polvo?", o:["650 g","500 g","700 g","130 g"], e:"Opal arranca en 650 g."},
-    {img:"s5_4", m:1, q:"Opal 650 g: el cliente lo compra a Bs 13,92 y lo vende a Bs 17. ¿Cuánto gana?", o:["Bs 3,08","Bs 2,92","Bs 4,08","Bs 2,08"], e:"Bs 17 − Bs 13,92 = Bs 3,08."},
-    {img:"s5_3", q:"¿Qué porcentaje de bacterias elimina Opal Antibacterial en la ropa?", o:["99,9%","90%","95%","99%"], e:"99,9%, probado en laboratorio."}
+    {ic:"chart", q:"¿Cuál es el formato más pequeño de Opal en polvo?", o:["650 g","500 g","700 g","130 g"], e:"Opal arranca en 650 g."},
+    {ic:"money", m:1, q:"Opal 650 g: el cliente lo compra a Bs 13,92 y lo vende a Bs 17. ¿Cuánto gana?", o:["Bs 3,08","Bs 2,92","Bs 4,08","Bs 2,08"], e:"Bs 17 − Bs 13,92 = Bs 3,08."},
+    {img:"s5_3", q:"¿Qué porcentaje de bacterias elimina Opal Antibacterial en la ropa?", o:["99,9%","90%","95%","99%"], e:"99,9%, probado en laboratorio."},
+    {img:"s5_4", q:"¿Cuál es el PVP de Opal de 1,8 kg?", o:["Bs 42","Bs 47","Bs 37","Bs 39"], e:"Opal: 650 g Bs 17 · 1,8 kg Bs 42 · 3,5 kg Bs 69."},
+    {img:"s5_5", m:1, q:"Opal Ultra 3,5 kg: el cliente lo compra a Bs 61,65 y lo vende a Bs 69. ¿Cuánto gana?", o:["Bs 7,35","Bs 8,35","Bs 6,65","Bs 9,35"], e:"Bs 69 − Bs 61,65 = Bs 7,35."}
   ],
   uno: [
-    {img:"s6_5", q:"¿Cuántas fragancias tiene UNO en polvo, contando la nueva?", o:["5","4","3","6"], e:"Armonía Floral, Frescura Floral, Frescura Limón, Coco y Paraíso Tropical."},
-    {img:"s6_3", q:"¿Cuál es el formato más grande de UNO en polvo?", o:["9,2 kg","4,7 kg","3,8 kg","5 kg"], e:"UNO Armonía Floral llega a 9,2 kg."},
+    {ic:"chart", q:"¿Cuántas fragancias tiene UNO en polvo?", o:["5","4","3","6"], e:"Armonía Floral, Frescura Limón, Frescura Floral, Coco y Paraíso Tropical."},
+    {ic:"chart", q:"¿Cuál es el formato más grande de UNO en polvo?", o:["9,2 kg","4,7 kg","3,8 kg","5 kg"], e:"UNO Armonía Floral llega a 9,2 kg."},
     {img:"s6_5", m:1, q:"UNO 620 g: el cliente lo compra a Bs 12,19 y lo vende a Bs 14. ¿Cuánto gana?", o:["Bs 1,81","Bs 2,19","Bs 1,19","Bs 2,81"], e:"Bs 14 − Bs 12,19 = Bs 1,81."},
-    {img:"s6_3", q:"¿Cuál es la fragancia más nueva de UNO?", o:["Paraíso Tropical","Coco","Frescura Limón","Armonía Floral"], e:"Paraíso Tropical es la nueva variedad."}
+    {ic:"tag", q:"¿Cuál es el PVP de UNO en polvo de 4,7 kg?", o:["Bs 90","Bs 82","Bs 94","Bs 85"], e:"UNO: 620 g Bs 14 · 1,8 kg Bs 37 · 4,7 kg Bs 90 · 9,2 kg Bs 165."},
+    {ic:"money", m:1, q:"UNO 650 g: el cliente lo compra a Bs 13,13 y lo vende a Bs 15. ¿Cuánto gana?", o:["Bs 1,87","Bs 2,13","Bs 1,13","Bs 2,87"], e:"Bs 15 − Bs 13,13 = Bs 1,87."},
+    {ic:"tag", q:"¿Cuál es el PVP del jabón de lavar UNO de 190 g?", o:["Bs 6","Bs 7","Bs 4,50","Bs 3"], e:"Jabón UNO 190 g: PVP Bs 6 (el de Bolívar, Bs 7)."},
+    {ic:"chart", q:"¿En qué territorio se reposiciona UNO?", o:["Sensorialidad: aroma","Cuidado","Remoción de manchas","Multiuso"], e:"Bolívar: cuidado · Opal: remoción de manchas · UNO: aroma · Patito: multiuso."}
   ],
   patito: [
     {img:"s8_5", q:"¿Cuál es el formato más grande de Patito?", o:["4,7 kg","3,8 kg","9,2 kg","2 kg"], e:"Patito: 130 g, 500 g, 640 g y 4,7 kg."},
-    {img:"s8_6", m:1, q:"Patito 130 g: el cliente lo compra a Bs 2,37 y lo vende a Bs 3. ¿Cuánto gana por sachet?", o:["Bs 0,63","Bs 0,37","Bs 1,63","Bs 0,73"], e:"Bs 3 − Bs 2,37 = Bs 0,63."},
-    {img:"s8_6", q:"¿Cuántos sachets de 130 g equivalen, más o menos, a una bolsa de 640 g?", o:["≈5","≈3","≈7","≈10"], e:"640 ÷ 130 ≈ 4,9: casi 5 sachets."},
-    {img:"s8_5", q:"¿Cuáles son las variedades de Patito?", o:["Limón, Floral y Bebé","Limón, Coco y Bebé","Floral y Lavanda","Solo Limón"], e:"Patito: Limón, Floral y Bebé."}
+    {ic:"money", m:1, q:"Patito 130 g: el cliente lo compra a Bs 2,37 y lo vende a Bs 3. ¿Cuánto gana por sachet?", o:["Bs 0,63","Bs 0,37","Bs 1,63","Bs 0,73"], e:"Bs 3 − Bs 2,37 = Bs 0,63."},
+    {ic:"box", q:"¿Cuántos sachets de 130 g equivalen, más o menos, a una bolsa de 640 g?", o:["≈5","≈3","≈7","≈10"], e:"640 ÷ 130 ≈ 4,9: casi 5 sachets."},
+    {ic:"chart", q:"¿Cuáles son las variedades de Patito?", o:["Limón, Floral y Bebé","Limón, Coco y Bebé","Floral y Lavanda","Solo Limón"], e:"Patito: Limón, Floral y Bebé."},
+    {ic:"box", q:"¿Cuántos sachets de Patito 130 g trae una caja?", o:["60","48","24","100"], e:"Patito 130 g: caja de 60 unidades."},
+    {img:"s8_6", m:1, q:"Patito 500 g: el cliente lo compra a Bs 7,78 y lo vende a Bs 9. ¿Cuánto gana?", o:["Bs 1,22","Bs 1,78","Bs 0,78","Bs 2,22"], e:"Bs 9 − Bs 7,78 = Bs 1,22."}
   ],
   finoc: [
-    {img:"f4_9", q:"¿Cuál es el PVP de Fino Clásico 900 ml?", o:["Bs 18,50","Bs 16","Bs 20","Bs 24"], e:"Fino Clásico: 450 ml Bs 9,50 · 900 ml Bs 18,50 · 1,8 L Bs 37 · 4,5 L Bs 92,50."},
-    {img:"f4_9", m:1, q:"Fino Clásico 900 ml: el cliente lo compra a Bs 18 y lo vende a Bs 18,50. ¿Cuánto gana?", o:["Bs 0,50","Bs 1","Bs 1,50","Bs 0,20"], e:"Bs 18,50 − Bs 18 = Bs 0,50."},
-    {img:"f4_9", m:1, q:"Fino Clásico 450 ml cuesta Bs 9,50 y el de 900 ml Bs 18,50. ¿Cuánto ahorras con una de 900 ml vs. dos de 450 ml?", o:["Bs 0,50","Bs 1","Nada","Bs 2"], e:"Dos de 450 ml = Bs 19. Una de 900 ml = Bs 18,50. Ahorro: Bs 0,50."},
-    {img:"f4_8", m:1, q:"Fino Clásico 1,8 L cuesta Bs 37. ¿Cuánto saldrían dos botellas de 900 ml a Bs 18,50?", o:["Bs 37: cuestan lo mismo","Bs 35","Bs 40","Bs 32"], e:"2 × Bs 18,50 = Bs 37: el 1,8 L tiene el mismo precio por litro."},
-    {img:"f4_9", q:"¿De qué está hecho Fino Clásico?", o:["Soya con vitamina A","100% girasol","Maíz","Oliva"], e:"Aceite 100% vegetal de soya, fortalecido con vitamina A."}
+    {ic:"tag", q:"¿Cuál es el PVP de Fino Clásico 900 ml?", o:["Bs 18,50","Bs 16","Bs 20","Bs 24"], e:"Fino Clásico: 450 ml Bs 9,50 · 900 ml Bs 18,50 · 1,8 L Bs 37 · 4,5 L Bs 92,50."},
+    {ic:"money", m:1, q:"Fino Clásico 900 ml: el cliente lo compra a Bs 18 y lo vende a Bs 18,50. ¿Cuánto gana?", o:["Bs 0,50","Bs 1","Bs 1,50","Bs 0,20"], e:"Bs 18,50 − Bs 18 = Bs 0,50."},
+    {ic:"money", m:1, q:"Fino Clásico 450 ml cuesta Bs 9,50 y el de 900 ml Bs 18,50. ¿Cuánto ahorras con una de 900 ml vs. dos de 450 ml?", o:["Bs 0,50","Bs 1","Nada","Bs 2"], e:"Dos de 450 ml = Bs 19. Una de 900 ml = Bs 18,50. Ahorro: Bs 0,50."},
+    {ic:"tag", m:1, q:"Fino Clásico 1,8 L cuesta Bs 37. ¿Cuánto saldrían dos botellas de 900 ml a Bs 18,50?", o:["Bs 37: cuestan lo mismo","Bs 35","Bs 40","Bs 32"], e:"2 × Bs 18,50 = Bs 37: el 1,8 L tiene el mismo precio por litro."},
+    {img:"f4_9", q:"¿De qué está hecho Fino Clásico?", o:["Soya, con vitamina A","100% girasol","Maíz","Oliva"], e:"Aceite 100% vegetal de soya, fortalecido con vitamina A."},
+    {ic:"box", q:"¿Cuántas botellas de Fino Clásico 900 ml trae una caja?", o:["12","24","6","8"], e:"900 ml: caja de 12. 450 ml: caja de 24."},
+    {img:"f4_8", q:"¿Cuál es el PVP del bidón Fino Clásico de 4,5 L?", o:["Bs 92,50","Bs 90","Bs 110","Bs 85"], e:"Fino Clásico 4,5 L: lista Bs 90, PVP Bs 92,50."},
+    {ic:"money", m:1, q:"Fino Clásico 1,8 L: el cliente lo compra a Bs 35,50 y lo vende a Bs 37. ¿Cuánto gana?", o:["Bs 1,50","Bs 2,50","Bs 0,50","Bs 1"], e:"Bs 37 − Bs 35,50 = Bs 1,50."}
   ],
   finol: [
     {img:"f2_3", q:"Fino Light es 100% girasol. ¿Cuánto menos grasas saturadas tiene que un aceite de soya?", o:["25%","10%","50%","15%"], e:"25% menos grasas saturadas: ideal para ensaladas."},
-    {img:"f2_3", m:1, q:"Fino Light 900 ml cuesta Bs 24 y Fino Clásico 900 ml Bs 18,50. ¿Cuántos bolivianos más cuesta el Light?", o:["Bs 5,50","Bs 4,50","Bs 6","Bs 3,50"], e:"Bs 24 − Bs 18,50 = Bs 5,50."},
+    {ic:"tag", m:1, q:"Fino Light 900 ml cuesta Bs 24 y Fino Clásico 900 ml Bs 18,50. ¿Cuántos bolivianos más cuesta el Light?", o:["Bs 5,50","Bs 4,50","Bs 6","Bs 3,50"], e:"Bs 24 − Bs 18,50 = Bs 5,50."},
     {img:"f5_4", m:1, q:"Fino Light 1,8 L: el cliente lo compra a Bs 43 y lo vende a Bs 46. ¿Cuánto gana?", o:["Bs 3","Bs 4","Bs 2","Bs 5"], e:"Bs 46 − Bs 43 = Bs 3."},
-    {img:"f5_4", q:"¿Cuál es el PVP del bidón Fino Light 4,5 L?", o:["Bs 110","Bs 92,50","Bs 105","Bs 120"], e:"Fino Light: 900 ml Bs 24 · 1,8 L Bs 46 · 4,5 L Bs 110."},
+    {ic:"tag", q:"¿Cuál es el PVP del bidón Fino Light 4,5 L?", o:["Bs 110","Bs 92,50","Bs 105","Bs 120"], e:"Fino Light: 900 ml Bs 24 · 1,8 L Bs 46 · 4,5 L Bs 110."},
+    {ic:"money", m:1, q:"Fino Light 900 ml: el cliente lo compra a Bs 22,40 y lo vende a Bs 24. ¿Cuánto gana?", o:["Bs 1,60","Bs 2,40","Bs 0,60","Bs 1,40"], e:"Bs 24 − Bs 22,40 = Bs 1,60."},
+    {img:"f2_3", q:"¿De qué está hecho Fino Light?", o:["100% girasol","Soya con vitamina A","Mezcla de soya y girasol","Maíz"], e:"Fino Light: aceite 100% de girasol (Tier 1)."}
   ],
   pastas: [
-    {img:"f10_3", q:"¿Con qué trigo se elaboran los fideos Don Vittorio?", o:["Trigo Durum","Trigo pan","Trigo sarraceno","Maíz"], e:"Trigo Durum: el de mejor calidad, por su dureza y alto contenido proteico."},
-    {img:"f10_3", m:1, q:"La caja de 12 Don Vittorio 400 g le cuesta Bs 87 al cliente y el PVP es Bs 9. ¿Cuánto gana por paquete?", o:["Bs 1,75","Bs 1,25","Bs 2,25","Bs 0,75"], e:"Bs 87 ÷ 12 = Bs 7,25. Bs 9 − Bs 7,25 = Bs 1,75."},
-    {img:"f10_1", m:1, q:"¿Qué fideo Don Vittorio sale más barato por kilo: el de 400 g a Bs 9 o el de 950 g a Bs 18?", o:["El de 950 g","El de 400 g","Salen igual","No se puede saber"], e:"950 g: ≈Bs 19 el kilo. 400 g: Bs 22,50 el kilo."},
+    {img:"f10_3", q:"¿Con qué trigo se elaboran los fideos Don Vittorio?", o:["Trigo Durum","Trigo pan","Trigo sarraceno","Maíz"], e:"Trigo Durum: el de mejor calidad, por su dureza, cocción y alto contenido proteico."},
+    {img:"f10_3", m:1, q:"La caja de 12 fideos cortos Don Vittorio 400 g le cuesta Bs 87 al cliente y el PVP es Bs 9. ¿Cuánto gana por paquete?", o:["Bs 1,75","Bs 1,25","Bs 2,25","Bs 0,75"], e:"Bs 87 ÷ 12 = Bs 7,25. Bs 9 − Bs 7,25 = Bs 1,75."},
+    {ic:"tag", m:1, q:"¿Qué fideo Don Vittorio sale más barato por kilo: el de 400 g a Bs 9 o el de 950 g a Bs 18?", o:["El de 950 g","El de 400 g","Salen igual","No se puede saber"], e:"950 g: ≈Bs 19 el kilo. 400 g: Bs 22,50 el kilo."},
     {img:"f10_1", q:"¿Cuál es el PVP de Don Vittorio 950 g?", o:["Bs 18","Bs 16,50","Bs 19,90","Bs 15"], e:"Don Vittorio: 400 g Bs 9 · 950 g Bs 18."},
+    {img:"f10_3", q:"¿Cuántos paquetes de fideos cortos Don Vittorio 400 g trae una caja?", o:["12","24","6","20"], e:"Codo rayado, rigatoni, canuto, espirales y corbatas de 400 g: caja de 12."},
+    {img:"f10_1", q:"¿Cuántos paquetes de Spaghetti Don Vittorio 400 g trae una caja?", o:["24","12","20","6"], e:"Los largos de 400 g (tallarín, spaghetti…) vienen de a 24."}
   ],
   salsas: [
     {img:"f13_1", m:1, q:"Salsa roja Don Vittorio: 200 g a Bs 9 y 400 g a Bs 16. ¿Cuánto ahorras con una de 400 g vs. dos de 200 g?", o:["Bs 2","Bs 1","Bs 4","Nada"], e:"Dos de 200 g = Bs 18. Una de 400 g = Bs 16. Ahorro: Bs 2."},
     {img:"f13_1", m:1, q:"Salsa 200 g: el cliente la compra a Bs 8 y la vende a Bs 9. ¿Cuánto gana?", o:["Bs 1","Bs 1,50","Bs 2","Bs 0,50"], e:"Bs 9 − Bs 8 = Bs 1."},
     {img:"f13_1", q:"¿Cuál es el PVP de la salsa roja Don Vittorio de 400 g?", o:["Bs 16","Bs 13,20","Bs 18","Bs 14"], e:"200 g Bs 9 · 400 g Bs 16."},
-    {img:"f13_1", q:"¿Qué ingredientes hacen a la salsa Don Vittorio “la más completa”?", o:["Zanahoria, hongo y laurel","Solo tomate y sal","Queso y crema","Carne molida"], e:"Puré de tomate, zanahoria, cebolla, ajo, hongo, laurel, pimienta y sal."}
+    {img:"f13_1", q:"¿Qué ingredientes hacen a la salsa Don Vittorio “la más completa”?", o:["Zanahoria, hongo y laurel","Solo tomate y sal","Queso y crema","Carne molida"], e:"Puré de tomate, zanahoria, cebolla, ajo, hongo, laurel, pimienta y sal."},
+    {img:"f13_1", m:1, q:"Salsa Don Vittorio 400 g: el cliente la compra a Bs 14,50 y la vende a Bs 16. ¿Cuánto gana?", o:["Bs 1,50","Bs 2,50","Bs 1","Bs 0,50"], e:"Bs 16 − Bs 14,50 = Bs 1,50."},
+    {img:"f13_1", q:"¿Cuántas salsas Don Vittorio trae una caja?", o:["12","24","6","10"], e:"200 g y 400 g: caja de 12."}
   ],
   conservas: [
-    {img:"f16_4", m:1, q:"Sabrosa 425 g: el tarro cuesta Bs 23 y el oval Bs 26. ¿Cuántos bolivianos más cuesta el oval?", o:["Bs 3","Bs 2","Bs 4","Bs 3,50"], e:"Bs 26 − Bs 23 = Bs 3."},
+    {ic:"tag", m:1, q:"Sabrosa 425 g: el tarro cuesta Bs 23 y el oval Bs 26. ¿Cuántos bolivianos más cuesta el oval?", o:["Bs 3","Bs 2","Bs 4","Bs 3,50"], e:"Bs 26 − Bs 23 = Bs 3."},
     {img:"f16_3", m:1, q:"Sabrosa tarro: el cliente lo compra a Bs 21,80 y lo vende a Bs 23. ¿Cuánto gana?", o:["Bs 1,20","Bs 1,80","Bs 2,20","Bs 0,80"], e:"Bs 23 − Bs 21,80 = Bs 1,20."},
-    {img:"f16_4", m:1, q:"Oval: el cliente compra a Bs 24,80 y vende a Bs 26. Tarro: compra a Bs 21,80 y vende a Bs 23. ¿Cuál le deja más bolivianos?", o:["Dejan lo mismo","El oval","El tarro","Ninguno deja"], e:"Los dos dejan Bs 1,20 por lata."},
-    {img:"f16_3", q:"¿Cuál es el rol de Sabrosa en conservas (T3)?", o:["Mantener la plataforma de volumen","Ser la marca premium","Exportar","Competir en aceites"], e:"Territorio de conveniencia: mantener la plataforma de volumen."}
+    {ic:"chart", m:1, q:"Oval: el cliente compra a Bs 24,80 y vende a Bs 26. Tarro: compra a Bs 21,80 y vende a Bs 23. ¿Cuál le deja más bolivianos?", o:["Dejan lo mismo","El oval","El tarro","Ninguno deja"], e:"Los dos dejan Bs 1,20 por lata."},
+    {ic:"chart", q:"¿Cuál es el rol de Sabrosa en conservas (T3)?", o:["Mantener la plataforma de volumen","Ser la marca premium","Exportar","Competir en aceites"], e:"Territorio de conveniencia: mantener la plataforma de volumen."},
+    {img:"f16_3", q:"¿Cuántos gramos trae una lata de Sabrosa, tarro u oval?", o:["425 g","400 g","170 g","500 g"], e:"Tarro y oval: 425 g."},
+    {ic:"box", q:"¿Cuántas latas de Sabrosa 425 g trae una caja?", o:["24","12","48","6"], e:"Caja de 24 latas."},
+    {img:"f16_4", q:"¿Cuál es el PVP de Sabrosa oval 425 g?", o:["Bs 26","Bs 23","Bs 24,80","Bs 28"], e:"Oval Bs 26 · tarro Bs 23."}
   ],
   gestion: [
     {ic:"truck", q:"Estás en 1.000 tiendas de un universo de 4.000. ¿Cuál es tu cobertura?", o:["25%","40%","4%","75%"], e:"1.000 ÷ 4.000 = 25%."},
@@ -569,6 +602,7 @@ const QUESTIONS = {
     {ic:"chart", q:"El mercado es de 1.000 t y nosotros vendemos 400 t. ¿Cuál es nuestro share?", o:["40%","25%","4%","60%"], e:"400 ÷ 1.000 = 40%."},
     {ic:"store", q:"En la tienda ya no hay nuestro producto. ¿Cómo se llama eso?", o:["Quiebre de stock","Sobrestock","Rotación","Cobertura"], e:"Quiebre de stock: esa venta se pierde."}
   ]
+
 };
 
 // Crisis del día a día: cálculos sencillos para la pizarra. Opciones en pantalla; el tiempo (30 s) arranca cuando el anfitrión lo indica.
@@ -577,8 +611,8 @@ const CASTIGOS = [
    o:["No bajar: proteger la rentabilidad","Bajar a Bs 12","Bajar a Bs 11","Bajar a Bs 10,50"], e:"A Bs 12 ganaríamos Bs 1 en vez de Bs 2: la mitad. A Bs 11 o menos no ganamos nada."},
   {type:"mc", t:"¡Nuestro cliente se va a la competencia!", reto:"Le ofrecen más descuento. Le vendemos a Bs 13, nos cuesta Bs 11 y queremos ganar al menos Bs 1. ¿Cuánto descuento le podemos dar como máximo?",
    f:"Descuento máximo = Precio − Costo − Ganancia mínima", o:["Bs 1","Bs 2","Bs 3","Bs 0,50"], e:"13 − 11 − 1 = Bs 1 de descuento máximo."},
-  {type:"mc", t:"¡El contrabando crece por el tipo de cambio!", reto:"La lejía de contrabando se vende a Bs 10 y la nuestra de 1 L a Bs 13. ¿Qué tan más cara es la nuestra?",
-   f:"Diferencia % = (13 − 10) ÷ 10", o:["30%","3%","13%","10%"], e:"3 ÷ 10 = 30%. Esa brecha se defiende con marca registrada y 5,9% de concentración."},
+  {type:"mc", t:"¡El contrabando crece por el tipo de cambio!", reto:"Supongamos que un aceite de contrabando de 900 ml se vende a Bs 15 y Fino Clásico 900 ml tiene PVP de Bs 18,50. ¿Qué tan más caro es Fino?",
+   f:"Diferencia % = (18,50 − 15) ÷ 15", o:["≈23%","≈19%","3,5%","35%"], e:"3,50 ÷ 15 ≈ 23%."},
   {type:"mc", t:"¡El cliente pide su escala de descuento!", reto:"Compra 50 cajas a Bs 100 cada una y por volumen le toca 5% de descuento. ¿Cuánto paga?",
    f:"Total = Cajas × Precio − Descuento", o:["Bs 4.750","Bs 5.000","Bs 4.500","Bs 4.950"], e:"50 × Bs 100 = Bs 5.000. 5% = Bs 250. Paga Bs 4.750."},
   {type:"mc", t:"¡El dólar subió!", reto:"Nuestro costo es Bs 10 y sube 10% por el tipo de cambio. ¿Cuál es el nuevo costo?",
@@ -587,8 +621,8 @@ const CASTIGOS = [
    o:["Bs 0,50","Bs 1,50","Bs 2","Nada"], e:"13 − 1,50 = Bs 11,50. Menos Bs 11 de costo: ganamos Bs 0,50 (antes Bs 2)."},
   {type:"mc", t:"¡El distribuidor está lleno de stock!", reto:"Tiene 6.000 cajas y vende 1.500 al mes. ¿Para cuántos meses le alcanza?",
    f:"Meses = Stock ÷ Venta mensual", o:["4 meses","3 meses","6 meses","2 meses"], e:"6.000 ÷ 1.500 = 4 meses: no nos va a comprar en un buen rato."},
-  {type:"mc", t:"¡Cargaste mal los precios y hay refacturación!", reto:"Facturaste 300 lejías de 1 L a Bs 11 en vez de Bs 13. ¿Cuánto hay que refacturar?",
-   o:["Bs 600","Bs 300","Bs 3.900","Bs 200"], e:"Bs 2 de diferencia × 300 = Bs 600."},
+  {type:"mc", t:"¡Cargaste mal los precios y hay refacturación!", reto:"Facturaste 300 lejías de 1 L a Bs 9 en vez de su precio de lista de Bs 11. ¿Cuánto hay que refacturar?",
+   o:["Bs 600","Bs 300","Bs 2.700","Bs 200"], e:"Bs 2 de diferencia × 300 = Bs 600."},
   {type:"mc", t:"¡Cierre de mes y faltan toneladas!", reto:"Te faltan 10 toneladas para la meta y cada caja pesa 20 kg. ¿Cuántas cajas tienes que vender?",
    f:"1 tonelada = 1.000 kg", o:["500","200","1.000","50"], e:"10 t = 10.000 kg ÷ 20 kg = 500 cajas."},
   {type:"mc", t:"¡Te piden elegir la promo!", reto:"Promo A: por cada 10 cajas, 1 gratis. Promo B: 5% de descuento. ¿Cuál le cuesta más a la categoría?",
@@ -600,91 +634,101 @@ const CASTIGOS = [
 ];
 
 
-// Fase final (últimos 3 minutos): preguntas más complejas, con más tiempo.
+// Fase difícil (desde 500 t): solo cálculos con datos de las capacitaciones y del Price List.
 const QUESTIONS_HARD = {
   lejia: [
-    {img:"h2_0", m:1, q:"El cliente compra la caja de 12 lejías de 1 L a Bs 132 y vende cada una a Bs 13. ¿Cuánto gana por unidad?", o:["Bs 2","Bs 1,50","Bs 3","Bs 2,50"], e:"Bs 132 ÷ 12 = Bs 11. Vende a Bs 13: gana Bs 2."},
+    {img:"h2_0", m:1, x:5, q:"La caja de 12 lejías de 1 L cuesta Bs 132 y el PVP es Bs 13. ¿Margen del cliente sobre el PVP?", o:["≈15%","≈10%","≈20%","≈2%"], e:"Bs 132 ÷ 12 = Bs 11. (13 − 11) ÷ 13 ≈ 15%."},
     {img:"h2_5", m:1, q:"La caja de 4 lejías de 4,7 L cuesta Bs 172 al cliente y el PVP es Bs 47. ¿Cuánto gana por unidad?", o:["Bs 4","Bs 3","Bs 5","Bs 2"], e:"Bs 172 ÷ 4 = Bs 43. Bs 47 − Bs 43 = Bs 4."},
-    {img:"h2_5", m:1, x:5, q:"Lejía 1 L a Bs 13 y 4,7 L a Bs 47. ¿Cuánto más barato sale el litro en el formato grande?", o:["≈23%","≈10%","≈30%","Es igual"], e:"1 L: Bs 13/L. 4,7 L: Bs 10/L. (13 − 10) ÷ 13 ≈ 23%."},
+    {ic:"tag", m:1, x:5, q:"Lejía 1 L a Bs 13 y 4,7 L a Bs 47. ¿Cuánto más barato sale el litro en el formato grande?", o:["≈23%","≈10%","≈30%","Es igual"], e:"1 L: Bs 13/L. 4,7 L: Bs 10/L. (13 − 10) ÷ 13 ≈ 23%."},
     {img:"h2_2", m:1, q:"La lejía de 3,8 L tiene PVP de Bs 40. ¿Cuánto paga el consumidor por litro?", o:["≈Bs 10,53","≈Bs 9,50","≈Bs 11,20","Bs 10"], e:"Bs 40 ÷ 3,8 L ≈ Bs 10,53 por litro."},
     {img:"h2_1", m:1, x:5, q:"La caja de 6 lejías de 1,8 L cuesta Bs 126,60 y el PVP es Bs 24. ¿Margen del cliente sobre el PVP?", o:["≈12%","≈15%","≈9%","≈20%"], e:"Bs 126,60 ÷ 6 = Bs 21,10. (24 − 21,10) ÷ 24 ≈ 12%."},
-    {img:"h2_1", q:"¿Qué concentración de hipoclorito de sodio tiene la lejía Sapolio?", o:["5,9%","4%","4,5%","7,5%"], e:"5,9%: la más concentrada de Bolivia."}
+    {img:"h2_2", m:1, x:5, q:"La caja de 4 lejías de 3,8 L cuesta Bs 148 y el PVP es Bs 40. ¿Margen del cliente sobre el PVP?", o:["7,5%","10%","3%","12%"], e:"Bs 148 ÷ 4 = Bs 37. (40 − 37) ÷ 40 = 7,5%."},
+    {img:"h2_0", m:1, q:"El cliente vende las 12 lejías de 1 L de una caja (Bs 132) a Bs 13 cada una. ¿Cuánto gana por caja?", o:["Bs 24","Bs 12","Bs 156","Bs 20"], e:"12 × Bs 13 = Bs 156. Bs 156 − Bs 132 = Bs 24."}
   ],
   lava: [
-    {img:"h4_3", m:1, x:5, q:"El lavavajillas 750 ml (Bs 16) trae “+200 ml gratis”. ¿Cuánto baja el precio por ml?", o:["≈21%","≈27%","≈10%","No cambia"], e:"1 − 750 ÷ 950 ≈ 21% menos por ml."},
-    {img:"h4_0", m:1, q:"La caja de 12 lavavajillas de 750 ml cuesta Bs 157,20 y el PVP es Bs 16. ¿Cuánto gana el cliente por unidad?", o:["Bs 2,90","Bs 3,10","Bs 1,90","Bs 3,50"], e:"Bs 157,20 ÷ 12 = Bs 13,10. Bs 16 − Bs 13,10 = Bs 2,90."},
-    {img:"h4_3", m:1, x:5, q:"Lavavajillas 750 ml a Bs 16 y 1,25 L a Bs 20. ¿Cuánto más barato es el litro del 1,25 L?", o:["≈25%","≈20%","≈33%","Es igual"], e:"750 ml: Bs 21,33/L. 1,25 L: Bs 16/L. (21,33 − 16) ÷ 21,33 ≈ 25%."},
-    {img:"h4_1", m:1, q:"El lavavajillas de 5 L tiene PVP de Bs 65. ¿Cuánto paga el consumidor por litro?", o:["Bs 13","Bs 15","Bs 11","Bs 16"], e:"Bs 65 ÷ 5 L = Bs 13 por litro."}
+    {ic:"money", m:1, q:"La caja de 12 lavavajillas de 750 ml cuesta Bs 157,20 y el PVP es Bs 16. ¿Cuánto gana el cliente por unidad?", o:["Bs 2,90","Bs 3,10","Bs 1,90","Bs 3,50"], e:"Bs 157,20 ÷ 12 = Bs 13,10. Bs 16 − Bs 13,10 = Bs 2,90."},
+    {ic:"tag", m:1, x:5, q:"Lavavajillas 750 ml a Bs 16 y 1,25 L a Bs 20. ¿Cuánto más barato es el litro del 1,25 L?", o:["≈25%","≈20%","≈33%","Es igual"], e:"750 ml: ≈Bs 21,33/L. 1,25 L: Bs 16/L. (21,33 − 16) ÷ 21,33 ≈ 25%."},
+    {img:"h4_1", m:1, q:"El lavavajillas de 5 L tiene PVP de Bs 65. ¿Cuánto paga el consumidor por litro?", o:["Bs 13","Bs 15","Bs 11","Bs 16"], e:"Bs 65 ÷ 5 L = Bs 13 por litro."},
+    {ic:"money", m:1, x:5, q:"Lavavajillas en crema 1 kg: la caja de 6 cuesta Bs 96,60 y el PVP es Bs 19. ¿Margen del cliente sobre el PVP?", o:["≈15%","≈10%","≈19%","≈3%"], e:"Bs 96,60 ÷ 6 = Bs 16,10. (19 − 16,10) ÷ 19 ≈ 15%."},
+    {ic:"tag", m:1, x:5, q:"Lavavajillas 500 ml a Bs 11 y 750 ml a Bs 16. ¿Cuál sale más barato por litro?", o:["El de 750 ml (≈Bs 21,33/L)","El de 500 ml (Bs 22/L)","Salen igual","No se puede saber"], e:"500 ml: Bs 22/L. 750 ml: ≈Bs 21,33/L. Por poco gana el 750 ml."},
+    {img:"h4_0", m:1, q:"La caja de 4 lavavajillas de 5 L cuesta Bs 244 y el PVP es Bs 65. ¿Cuánto gana el cliente por unidad?", o:["Bs 4","Bs 6","Bs 3","Bs 9"], e:"Bs 244 ÷ 4 = Bs 61. Bs 65 − Bs 61 = Bs 4."}
   ],
   limpia: [
-    {img:"h6_11", m:1, q:"La caja de 12 Limpia Todo de 900 ml cuesta Bs 143,04 y el PVP es Bs 15. ¿Cuánto gana el cliente?", o:["≈Bs 3,08","≈Bs 2,50","≈Bs 3,92","≈Bs 1,92"], e:"Bs 143,04 ÷ 12 = Bs 11,92. Bs 15 − Bs 11,92 = Bs 3,08."},
-    {img:"h6_14", m:1, x:5, q:"Limpia Todo 900 ml a Bs 15 y 4,9 L a Bs 60. ¿Cuánto más barato es el litro del formato grande?", o:["≈27%","≈15%","≈40%","≈10%"], e:"900 ml: Bs 16,67/L. 4,9 L: Bs 12,24/L. Diferencia ≈27%."},
-    {img:"h6_14", m:1, x:5, q:"El Limpia Todo 1,8 L le cuesta Bs 21,73 al cliente y su PVP es Bs 25. ¿Margen del cliente?", o:["≈13%","≈20%","≈8%","≈25%"], e:"(25 − 21,73) ÷ 25 ≈ 13%."},
-    {img:"h6_11", q:"¿Hasta cuántas horas dura la fragancia del Limpia Todo con Maxifragancia?", o:["12 horas","6 horas","8 horas","24 horas"], e:"Tecnología Maxifragancia: hasta 12 horas."}
+    {ic:"money", m:1, q:"La caja de 12 Limpia Todo de 900 ml cuesta Bs 143,04 y el PVP es Bs 15. ¿Cuánto gana el cliente por unidad?", o:["≈Bs 3,08","≈Bs 2,50","≈Bs 3,92","≈Bs 1,92"], e:"Bs 143,04 ÷ 12 = Bs 11,92. Bs 15 − Bs 11,92 = Bs 3,08."},
+    {ic:"tag", m:1, x:5, q:"Limpia Todo 900 ml a Bs 15 y 4,9 L a Bs 60. ¿Cuánto más barato es el litro del formato grande?", o:["≈27%","≈15%","≈40%","≈10%"], e:"900 ml: ≈Bs 16,67/L. 4,9 L: ≈Bs 12,24/L. Diferencia ≈27%."},
+    {ic:"money", m:1, x:5, q:"El Limpia Todo 1,8 L le cuesta Bs 21,73 al cliente y su PVP es Bs 25. ¿Margen del cliente?", o:["≈13%","≈20%","≈8%","≈25%"], e:"(25 − 21,73) ÷ 25 ≈ 13%."},
+    {img:"h6_11", m:1, x:5, q:"Limpia Todo 4,9 L: el cliente lo compra a Bs 53,58 y el PVP es Bs 60. ¿Margen del cliente sobre el PVP?", o:["≈11%","≈6%","≈15%","≈20%"], e:"(60 − 53,58) ÷ 60 ≈ 10,7%."},
+    {ic:"money", m:1, q:"La caja de 6 Limpia Todo de 1,8 L cuesta Bs 130,40 y el PVP es Bs 25. ¿Cuánto gana el cliente por caja?", o:["Bs 19,60","Bs 25","Bs 3,27","Bs 15,40"], e:"6 × Bs 25 = Bs 150. Bs 150 − Bs 130,40 = Bs 19,60."}
   ],
   ambi: [
     {img:"h8_5", m:1, q:"El cliente compra el ambientador a Bs 14 y lo vende a Bs 16. ¿Cuál es su margen sobre el PVP?", o:["12,5%","14%","16%","2%"], e:"(16 − 14) ÷ 16 = 12,5%."},
     {img:"h8_7", m:1, x:5, q:"El ambientador trae 360 ml y cuesta Bs 16. ¿Cuánto cuestan 100 ml?", o:["≈Bs 4,44","≈Bs 3,60","≈Bs 5,20","≈Bs 1,60"], e:"Bs 16 ÷ 3,6 ≈ Bs 4,44 por cada 100 ml."},
-    {img:"h8_5", q:"¿Cuántos aromas tiene el ambientador Sapolio?", o:["8","5","6","10"], e:"Lavanda, Potpourrí, Jardín de rosas, Arrullos de bebé, Vainilla, Antitabaco, Coco tropical y Melón."},
-    {img:"h10_2", m:1, q:"La caja de 12 insecticidas cuesta Bs 170,40 y el PVP es Bs 17. ¿Cuánto gana el cliente por unidad?", o:["Bs 2,80","Bs 3,20","Bs 1,80","Bs 4,00"], e:"Bs 170,40 ÷ 12 = Bs 14,20. Bs 17 − Bs 14,20 = Bs 2,80."},
-    {img:"h10_4", q:"El Matamoscas Sapolio mata mosquitos… ¿cuánto más rápido?", o:["30%","10%","50%","2 veces"], e:"30% más rápido, efectivo contra el mosquito del dengue."},
-    {img:"h10_6", q:"El Mata Todo Sapolio tiene efectividad comprobada en más de… ¿cuántas plagas?", o:["7","3","5","12"], e:"Más de 7 plagas, con el estudio más amplio en Bolivia."}
+    {img:"h10_6", m:1, q:"La caja de 12 insecticidas cuesta Bs 170,40 y el PVP es Bs 17. ¿Cuánto gana el cliente por unidad?", o:["Bs 2,80","Bs 3,20","Bs 1,80","Bs 4,00"], e:"Bs 170,40 ÷ 12 = Bs 14,20. Bs 17 − Bs 14,20 = Bs 2,80."},
+    {img:"h8_7", m:1, q:"El cliente compra una caja de 12 ambientadores a Bs 14 y los vende a Bs 16. ¿Cuánto gana por caja?", o:["Bs 24","Bs 2","Bs 168","Bs 12"], e:"12 × Bs 2 = Bs 24."},
+    {img:"h10_6", m:1, x:5, q:"Insecticida: el cliente lo compra a Bs 14,20 y el PVP es Bs 17. ¿Margen sobre el PVP?", o:["≈16%","≈20%","≈12%","≈3%"], e:"(17 − 14,20) ÷ 17 ≈ 16,5%."}
   ],
   bolivar: [
-    {img:"s3_8", q:"¿Cuál NO es un formato de Bolívar Cuidado Total en polvo?", o:["1 kg","700 g","2 kg","3,8 kg"], e:"Cuidado Total: 700 g, 2 kg y 3,8 kg."},
-    {img:"s3_4", q:"¿En qué formatos viene Bolívar Bebé y Niños?", o:["730 g y 1,5 kg","500 g y 1 kg","700 g y 2 kg","1 kg y 3 kg"], e:"Bebé y Niños: 730 g y 1,5 kg."},
-    {img:"s3_8", m:1, x:5, q:"Bolívar 700 g: precio de lista Bs 18,14 y PVP Bs 21. ¿Margen del cliente sobre el PVP?", o:["≈14%","≈10%","≈20%","≈3%"], e:"(21 − 18,14) ÷ 21 ≈ 13,6%."},
-    {img:"s3_8", q:"¿Cuál es el formato más pequeño del suavizante Bolívar?", o:["80 ml","250 ml","500 ml","1 L"], e:"Suavizante: 80 ml, 1,5 L, 2,8 L y 4,7 L."},
-    {img:"s3_8", q:"¿Cuánto trae el Doy Pack del detergente líquido Bolívar?", o:["3 L","1,9 L","2,8 L","5 L"], e:"Líquido: frasco de 1,9 L y Doy Pack de 3 L."}
+    {ic:"money", m:1, x:5, q:"Bolívar 700 g: el cliente lo compra a Bs 18,14 y el PVP es Bs 21. ¿Margen del cliente sobre el PVP?", o:["≈14%","≈10%","≈20%","≈3%"], e:"(21 − 18,14) ÷ 21 ≈ 13,6%."},
+    {ic:"money", m:1, x:5, q:"Bolívar 700 g a Bs 21 y 2 kg a Bs 47. ¿Cuánto ahorra por kilo quien compra el de 2 kg?", o:["Bs 6,50","Bs 3,50","Bs 9","Nada"], e:"700 g: Bs 30/kg. 2 kg: Bs 23,50/kg. Ahorro: Bs 6,50 por kilo."},
+    {ic:"money", m:1, q:"Bolívar 3,8 kg: la caja de 4 cuesta Bs 286,80 y el PVP es Bs 78. ¿Cuánto gana el cliente por caja?", o:["Bs 25,20","Bs 6,30","Bs 31,20","Bs 18,20"], e:"4 × Bs 78 = Bs 312. Bs 312 − Bs 286,80 = Bs 25,20."},
+    {ic:"tag", m:1, x:5, q:"Suavizante Bolívar: 1,5 L a Bs 44 y 2,8 L a Bs 68. ¿Cuánto más barato sale el litro del de 2,8 L?", o:["≈Bs 5","≈Bs 2","≈Bs 8","Nada"], e:"1,5 L: ≈Bs 29,33/L. 2,8 L: ≈Bs 24,29/L. Diferencia ≈ Bs 5."},
+    {ic:"tag", m:1, x:5, q:"Bolívar líquido: frasco 1,9 L a Bs 63 y Doy Pack 3 L a Bs 85. ¿Cuánto más barato sale el litro en Doy Pack?", o:["≈Bs 4,80","≈Bs 2","≈Bs 7,50","Nada"], e:"Frasco: ≈Bs 33,16/L. Doy Pack: ≈Bs 28,33/L. Diferencia ≈ Bs 4,80."},
+    {img:"s3_4", m:1, x:5, q:"Bolívar Bebés y Niños 1,5 kg: el cliente lo compra a Bs 38,37 y el PVP es Bs 42. ¿Margen sobre el PVP?", o:["≈9%","≈4%","≈14%","≈20%"], e:"(42 − 38,37) ÷ 42 ≈ 8,6%."},
+    {img:"s3_3", m:1, q:"Jabón Bolívar 190 g: la caja de 48 barras cuesta Bs 5,93 por barra y el PVP es Bs 7. ¿Cuánto gana el cliente por caja?", o:["≈Bs 51,36","≈Bs 48","≈Bs 1,07","≈Bs 66"], e:"48 × (Bs 7 − Bs 5,93) = 48 × Bs 1,07 = Bs 51,36."}
   ],
   opal: [
-    {img:"s5_5", q:"¿Cuál es el formato más grande de Opal Ultra?", o:["3,5 kg","1,8 kg","4,7 kg","5 kg"], e:"Opal Ultra: 650 g, 1,8 kg y 3,5 kg."},
-    {img:"s5_4", q:"¿Cuál es el formato más pequeño de Opal en polvo?", o:["650 g","500 g","700 g","130 g"], e:"Opal arranca en 650 g."},
-    {img:"s5_4", m:1, x:5, q:"Opal 650 g: precio de lista Bs 13,92 y PVP Bs 17. ¿Margen del cliente sobre el PVP?", o:["≈18%","≈12%","≈25%","≈3%"], e:"(17 − 13,92) ÷ 17 ≈ 18%."},
-    {img:"s5_3", q:"¿Qué porcentaje de bacterias elimina Opal Antibacterial en la ropa?", o:["99,9%","90%","95%","99%"], e:"99,9%, probado en laboratorio."}
+    {ic:"money", m:1, x:5, q:"Opal 650 g: el cliente lo compra a Bs 13,92 y el PVP es Bs 17. ¿Margen del cliente sobre el PVP?", o:["≈18%","≈12%","≈25%","≈3%"], e:"(17 − 13,92) ÷ 17 ≈ 18%."},
+    {ic:"money", m:1, x:5, q:"Opal 650 g a Bs 17 y Opal Ultra 3,5 kg a Bs 69. ¿Cuánto ahorra por kilo quien compra el grande?", o:["≈Bs 6,40","≈Bs 3,20","≈Bs 10","Nada"], e:"650 g: ≈Bs 26,15/kg. 3,5 kg: ≈Bs 19,71/kg. Ahorro ≈ Bs 6,40."},
+    {img:"s5_4", m:1, x:5, q:"Opal 1,8 kg: el cliente lo compra a Bs 38,92 y el PVP es Bs 42. ¿Margen del cliente sobre el PVP?", o:["≈7%","≈3%","≈12%","≈18%"], e:"(42 − 38,92) ÷ 42 ≈ 7,3%."},
+    {img:"s5_5", m:1, q:"Opal Ultra 3,5 kg: la caja de 4 cuesta Bs 61,65 por bolsa y el PVP es Bs 69. ¿Cuánto gana el cliente por caja?", o:["Bs 29,40","Bs 7,35","Bs 36,75","Bs 22,05"], e:"4 × (Bs 69 − Bs 61,65) = 4 × Bs 7,35 = Bs 29,40."}
   ],
   uno: [
-    {img:"s6_5", q:"¿Cuántas fragancias tiene UNO en polvo, contando la nueva?", o:["5","4","3","6"], e:"Armonía Floral, Frescura Floral, Frescura Limón, Coco y Paraíso Tropical."},
-    {img:"s6_3", q:"¿Cuál es el formato más grande de UNO en polvo?", o:["9,2 kg","4,7 kg","3,8 kg","5 kg"], e:"UNO Armonía Floral llega a 9,2 kg."},
-    {img:"s6_3", m:1, q:"UNO 9,2 kg: el cliente lo compra a Bs 146,74 y lo vende a Bs 165. ¿Cuánto gana por bolsa?", o:["Bs 18,26","Bs 16,26","Bs 20,26","Bs 8,26"], e:"Bs 165 − Bs 146,74 = Bs 18,26."},
-    {img:"s6_3", q:"¿Cuál es el formato de entrada de UNO en polvo?", o:["620 g","130 g","500 g","700 g"], e:"UNO arranca en 620 g."}
+    {ic:"money", m:1, q:"UNO 9,2 kg: el cliente lo compra a Bs 146,74 y lo vende a Bs 165. ¿Cuánto gana por bolsa?", o:["Bs 18,26","Bs 16,26","Bs 20,26","Bs 8,26"], e:"Bs 165 − Bs 146,74 = Bs 18,26."},
+    {ic:"tag", m:1, x:5, q:"UNO 4,7 kg a Bs 90 y 4,8 kg a Bs 94. ¿Cuál sale más barato por kilo?", o:["El de 4,7 kg","El de 4,8 kg","Salen igual","No se puede saber"], e:"4,7 kg: ≈Bs 19,15/kg. 4,8 kg: ≈Bs 19,58/kg."},
+    {ic:"money", m:1, q:"Jabón UNO 190 g: el cliente lo compra a Bs 4,50 y lo vende a Bs 6. ¿Margen sobre el PVP?", o:["25%","33%","15%","50%"], e:"(6 − 4,50) ÷ 6 = 25%."},
+    {img:"s6_5", m:1, x:5, q:"UNO 620 g: el cliente lo compra a Bs 12,19 y el PVP es Bs 14. ¿Margen sobre el PVP?", o:["≈13%","≈9%","≈18%","≈2%"], e:"(14 − 12,19) ÷ 14 ≈ 12,9%."},
+    {ic:"money", m:1, x:5, q:"UNO 620 g a Bs 14 y 9,2 kg a Bs 165. ¿Cuánto ahorra por kilo quien compra el de 9,2 kg?", o:["≈Bs 4,65","≈Bs 2","≈Bs 8","Nada"], e:"620 g: ≈Bs 22,58/kg. 9,2 kg: ≈Bs 17,93/kg. Ahorro ≈ Bs 4,65."}
   ],
   patito: [
-    {img:"s8_5", q:"¿Cuál es el formato más grande de Patito?", o:["4,7 kg","3,8 kg","9,2 kg","2 kg"], e:"Patito: 130 g, 500 g, 640 g y 4,7 kg."},
-    {img:"s8_5", m:1, x:5, q:"Patito 640 g a Bs 14 y 4,7 kg a Bs 85. ¿Cuánto ahorra por kilo quien compra el grande?", o:["≈Bs 3,80","≈Bs 1,50","≈Bs 7","Nada"], e:"640 g: ≈Bs 21,88/kg. 4,7 kg: ≈Bs 18,09/kg. Ahorro ≈ Bs 3,80."},
-    {img:"s8_6", x:5, q:"¿Cuántos sachets de 130 g equivalen, más o menos, a una bolsa de 640 g?", o:["≈5","≈3","≈7","≈10"], e:"640 ÷ 130 ≈ 4,9: casi 5 sachets."},
-    {img:"s8_5", q:"¿En qué segmento juega Patito?", o:["T4","T1","T2","T3"], e:"Bolívar T1, Opal T2, UNO T3 y Patito T4."}
+    {ic:"money", m:1, x:5, q:"Patito 640 g a Bs 14 y 4,7 kg a Bs 85. ¿Cuánto ahorra por kilo quien compra el grande?", o:["≈Bs 3,80","≈Bs 1,50","≈Bs 7","Nada"], e:"640 g: ≈Bs 21,88/kg. 4,7 kg: ≈Bs 18,09/kg. Ahorro ≈ Bs 3,80."},
+    {ic:"box", x:5, q:"¿Cuántos sachets de 130 g equivalen, más o menos, a una bolsa de 640 g?", o:["≈5","≈3","≈7","≈10"], e:"640 ÷ 130 ≈ 4,9: casi 5 sachets."},
+    {img:"s8_6", m:1, x:5, q:"Patito 500 g: el cliente lo compra a Bs 7,78 y el PVP es Bs 9. ¿Margen del cliente sobre el PVP?", o:["≈14%","≈9%","≈22%","≈1%"], e:"(9 − 7,78) ÷ 9 ≈ 13,6%."},
+    {ic:"money", m:1, q:"Una caja de 60 sachets Patito 130 g le cuesta Bs 2,37 por sachet y los vende a Bs 3. ¿Cuánto gana por caja?", o:["Bs 37,80","Bs 0,63","Bs 60","Bs 22,20"], e:"60 × Bs 0,63 = Bs 37,80."},
+    {img:"s8_5", m:1, x:5, q:"Patito 4,7 kg: el cliente lo compra a Bs 77,40 y el PVP es Bs 85. ¿Margen sobre el PVP?", o:["≈9%","≈5%","≈14%","≈20%"], e:"(85 − 77,40) ÷ 85 ≈ 8,9%."}
   ],
   finoc: [
-    {img:"f4_9", q:"¿Cuál es el PVP de Fino Clásico 900 ml?", o:["Bs 18,50","Bs 16","Bs 20","Bs 24"], e:"Fino Clásico: 450 ml Bs 9,50 · 900 ml Bs 18,50 · 1,8 L Bs 37 · 4,5 L Bs 92,50."},
-    {img:"f4_9", m:1, x:5, q:"Fino Clásico 900 ml: precio de lista Bs 18 y PVP Bs 18,50. ¿Margen del cliente sobre el PVP?", o:["≈2,7%","≈5%","≈0,5%","≈10%"], e:"(18,50 − 18) ÷ 18,50 ≈ 2,7%: el aceite deja poco margen al cliente."},
+    {ic:"money", m:1, x:5, q:"Fino Clásico 900 ml: el cliente lo compra a Bs 18 y el PVP es Bs 18,50. ¿Margen del cliente sobre el PVP?", o:["≈2,7%","≈5%","≈0,5%","≈10%"], e:"(18,50 − 18) ÷ 18,50 ≈ 2,7%: el aceite deja poco margen al cliente."},
     {img:"f4_8", m:1, x:5, q:"El bidón de Fino Clásico 4,5 L cuesta Bs 92,50. ¿Cuánto paga el consumidor por litro?", o:["≈Bs 20,56","Bs 18,50","Bs 22","≈Bs 19"], e:"92,50 ÷ 4,5 ≈ Bs 20,56: igual que en el de 900 ml (18,50 ÷ 0,9)."},
-    {img:"f4_9", q:"¿De qué está hecho Fino Clásico?", o:["Soya con vitamina A","100% girasol","Maíz","Oliva"], e:"Aceite 100% vegetal de soya, fortalecido con vitamina A; sin colesterol y con Omega 3."},
-    {img:"f4_8", q:"¿En qué tier juega Fino Clásico?", o:["T2","T1","T3","T4"], e:"Fino Light es T1, Fino Clásico T2; su rol es proteger volumen y participación."}
+    {ic:"money", m:1, q:"El cliente compra una caja de 12 Fino Clásico 900 ml a Bs 18 y los vende a Bs 18,50. ¿Cuánto gana por caja?", o:["Bs 6","Bs 0,50","Bs 12","Bs 9"], e:"12 × Bs 0,50 = Bs 6."},
+    {ic:"tag", m:1, x:5, q:"Fino Clásico 450 ml a Bs 9,50 y 4,5 L a Bs 92,50. ¿Cuánto más barato sale el litro del bidón?", o:["≈Bs 0,55","≈Bs 2","≈Bs 5","Nada"], e:"450 ml: ≈Bs 21,11/L. 4,5 L: ≈Bs 20,56/L. Diferencia ≈ Bs 0,55."},
+    {img:"f4_8", m:1, x:5, q:"Fino Clásico 4,5 L: el cliente lo compra a Bs 90 y el PVP es Bs 92,50. ¿Margen sobre el PVP?", o:["≈2,7%","≈5%","≈1%","≈8%"], e:"(92,50 − 90) ÷ 92,50 ≈ 2,7%."}
   ],
   finol: [
-    {img:"f2_3", q:"Fino Light es 100% girasol. ¿Cuánto menos grasas saturadas tiene que un aceite de soya?", o:["25%","10%","50%","15%"], e:"25% menos grasas saturadas: ideal para ensaladas."},
-    {img:"f2_3", m:1, x:5, q:"Fino Light 900 ml cuesta Bs 24 y Fino Clásico 900 ml Bs 18,50. ¿Qué tan más caro es el Light?", o:["≈30%","≈23%","≈50%","≈5%"], e:"(24 − 18,50) ÷ 18,50 ≈ 30% de premium."},
-    {img:"f5_4", m:1, x:5, q:"Fino Light 1,8 L: precio de lista Bs 43 y PVP Bs 46. ¿Margen del cliente sobre el PVP?", o:["≈6,5%","≈3%","≈10%","≈13%"], e:"(46 − 43) ÷ 46 ≈ 6,5%."},
-    {img:"f5_4", q:"¿Cuál es el PVP del bidón Fino Light 4,5 L?", o:["Bs 110","Bs 92,50","Bs 105","Bs 120"], e:"Fino Light: 900 ml Bs 24 · 1,8 L Bs 46 · 4,5 L Bs 110."},
+    {ic:"tag", m:1, x:5, q:"Fino Light 900 ml cuesta Bs 24 y Fino Clásico 900 ml Bs 18,50. ¿Qué tan más caro es el Light?", o:["≈30%","≈23%","≈50%","≈5%"], e:"(24 − 18,50) ÷ 18,50 ≈ 30% de premium."},
+    {img:"f5_4", m:1, x:5, q:"Fino Light 1,8 L: el cliente lo compra a Bs 43 y el PVP es Bs 46. ¿Margen del cliente sobre el PVP?", o:["≈6,5%","≈3%","≈10%","≈13%"], e:"(46 − 43) ÷ 46 ≈ 6,5%."},
+    {ic:"money", m:1, x:5, q:"Fino Light 4,5 L: el cliente lo compra a Bs 106,10 y el PVP es Bs 110. ¿Margen del cliente sobre el PVP?", o:["≈3,5%","≈6%","≈1%","≈10%"], e:"(110 − 106,10) ÷ 110 ≈ 3,5%."},
+    {ic:"money", m:1, x:5, q:"Fino Light 900 ml: el cliente lo compra a Bs 22,40 y el PVP es Bs 24. ¿Margen del cliente sobre el PVP?", o:["≈6,7%","≈4%","≈10%","≈16%"], e:"(24 − 22,40) ÷ 24 ≈ 6,7%."},
+    {img:"f5_4", m:1, q:"La caja de 9 Fino Light 1,8 L le cuesta Bs 43 por botella y el PVP es Bs 46. ¿Cuánto gana el cliente por caja?", o:["Bs 27","Bs 3","Bs 36","Bs 18"], e:"9 × Bs 3 = Bs 27."}
   ],
   pastas: [
-    {img:"f10_3", q:"¿Con qué trigo se elaboran los fideos Don Vittorio?", o:["Trigo Durum","Trigo pan","Trigo sarraceno","Maíz"], e:"Trigo Durum: el de mejor calidad, por su dureza, cocción y alto contenido proteico."},
-    {img:"f10_3", m:1, x:5, q:"La caja de 12 Don Vittorio 400 g cuesta Bs 87 y el PVP es Bs 9. ¿Margen del cliente sobre el PVP?", o:["≈19%","≈10%","≈25%","≈8%"], e:"Bs 87 ÷ 12 = Bs 7,25. (9 − 7,25) ÷ 9 ≈ 19%."},
-    {img:"f10_1", m:1, x:5, q:"Don Vittorio 400 g a Bs 9 y 950 g a Bs 18. ¿Cuánto ahorra por kilo quien compra el de 950 g?", o:["≈Bs 3,55","≈Bs 1,50","≈Bs 9","Nada"], e:"400 g: Bs 22,50/kg. 950 g: ≈Bs 18,95/kg. Ahorro ≈ Bs 3,55 por kilo."},
-    {img:"f10_1", q:"¿Cuál es el PVP de Don Vittorio 950 g?", o:["Bs 18","Bs 16,50","Bs 19,90","Bs 15"], e:"Don Vittorio: 400 g Bs 9 · 950 g Bs 18."},
+    {img:"f10_3", m:1, x:5, q:"La caja de 12 fideos cortos Don Vittorio 400 g cuesta Bs 87 y el PVP es Bs 9. ¿Margen del cliente sobre el PVP?", o:["≈19%","≈10%","≈25%","≈8%"], e:"Bs 87 ÷ 12 = Bs 7,25. (9 − 7,25) ÷ 9 ≈ 19%."},
+    {ic:"money", m:1, x:5, q:"Don Vittorio 400 g a Bs 9 y 950 g a Bs 18. ¿Cuánto ahorra por kilo quien compra el de 950 g?", o:["≈Bs 3,55","≈Bs 1,50","≈Bs 9","Nada"], e:"400 g: Bs 22,50/kg. 950 g: ≈Bs 18,95/kg. Ahorro ≈ Bs 3,55 por kilo."},
+    {img:"f10_1", m:1, q:"El Spaghetti Don Vittorio 400 g viene en caja de 24 a Bs 174 y el PVP es Bs 9. ¿Cuánto gana el cliente por caja?", o:["Bs 42","Bs 24","Bs 18","Bs 54"], e:"24 × Bs 9 = Bs 216. Bs 216 − Bs 174 = Bs 42."},
+    {img:"f10_3", m:1, q:"La caja de 12 fideos cortos Don Vittorio 400 g cuesta Bs 87 y el cliente vende cada paquete a Bs 9. ¿Cuánto gana por caja?", o:["Bs 21","Bs 12","Bs 9","Bs 27"], e:"12 × Bs 9 = Bs 108. Bs 108 − Bs 87 = Bs 21."}
   ],
   salsas: [
     {img:"f13_1", m:1, q:"Salsa roja Don Vittorio: 200 g a Bs 9 y 400 g a Bs 16. ¿Cuánto ahorras con una de 400 g vs. dos de 200 g?", o:["Bs 2","Bs 1","Bs 4","Nada"], e:"Dos de 200 g = Bs 18. Una de 400 g = Bs 16. Ahorro: Bs 2."},
-    {img:"f13_1", m:1, x:5, q:"Salsa 200 g: precio de lista Bs 8 y PVP Bs 9. ¿Margen del cliente sobre el PVP?", o:["≈11%","≈13%","≈8%","≈20%"], e:"(9 − 8) ÷ 9 ≈ 11%."},
-    {img:"f13_1", q:"¿Cuál es el PVP de la salsa roja Don Vittorio de 400 g?", o:["Bs 16","Bs 13,20","Bs 18","Bs 14"], e:"200 g Bs 9 · 400 g Bs 16."},
-    {img:"f13_1", q:"¿Qué ingredientes hacen a la salsa Don Vittorio “la más completa”?", o:["Zanahoria, hongo y laurel","Solo tomate y sal","Queso y crema","Carne molida"], e:"Puré de tomate, zanahoria, cebolla, ajo, hongo, laurel, pimienta y sal."}
+    {img:"f13_1", m:1, x:5, q:"Salsa 200 g: el cliente la compra a Bs 8 y el PVP es Bs 9. ¿Margen del cliente sobre el PVP?", o:["≈11%","≈13%","≈8%","≈20%"], e:"(9 − 8) ÷ 9 ≈ 11%."},
+    {img:"f13_1", m:1, q:"El cliente compra una caja de 12 salsas de 400 g a Bs 14,50 y las vende a Bs 16. ¿Cuánto gana por caja?", o:["Bs 18","Bs 12","Bs 24","Bs 1,50"], e:"12 × Bs 1,50 = Bs 18."},
+    {img:"f13_1", m:1, x:5, q:"Salsa 400 g: el cliente la compra a Bs 14,50 y el PVP es Bs 16. ¿Margen del cliente sobre el PVP?", o:["≈9%","≈12%","≈6%","≈15%"], e:"(16 − 14,50) ÷ 16 ≈ 9,4%."},
+    {img:"f13_1", m:1, x:5, q:"Salsa 200 g a Bs 9 y 400 g a Bs 16. ¿Cuánto más barato sale el gramo en el de 400 g?", o:["≈11%","≈5%","≈20%","Es igual"], e:"200 g: Bs 4,50 por 100 g. 400 g: Bs 4 por 100 g. (4,50 − 4) ÷ 4,50 ≈ 11%."}
   ],
   conservas: [
-    {img:"f16_4", m:1, x:5, q:"Sabrosa 425 g: tarro a Bs 23 y oval a Bs 26. ¿Qué tan más caro es el oval?", o:["≈13%","≈10%","≈20%","Es igual"], e:"(26 − 23) ÷ 23 ≈ 13%."},
-    {img:"f16_3", m:1, x:5, q:"Sabrosa tarro: precio de lista Bs 21,80 y PVP Bs 23. ¿Margen del cliente sobre el PVP?", o:["≈5%","≈10%","≈1%","≈15%"], e:"(23 − 21,80) ÷ 23 ≈ 5,2%."},
-    {img:"f16_4", m:1, x:5, q:"Oval: lista Bs 24,80 y PVP Bs 26. Tarro: lista Bs 21,80 y PVP Bs 23. ¿Cuál deja mejor margen % al cliente?", o:["El tarro","El oval","Igual","Ninguno"], e:"Los dos dejan Bs 1,20, pero el tarro sobre un PVP menor: ≈5,2% vs. ≈4,6%."},
-    {img:"f16_3", q:"¿Cuál es el rol de Sabrosa en conservas (T3)?", o:["Mantener la plataforma de volumen","Ser la marca premium","Exportar","Competir en aceites"], e:"Territorio de conveniencia: mantener la plataforma de volumen."}
+    {ic:"tag", m:1, x:5, q:"Sabrosa 425 g: tarro a Bs 23 y oval a Bs 26. ¿Qué tan más caro es el oval?", o:["≈13%","≈10%","≈20%","Es igual"], e:"(26 − 23) ÷ 23 ≈ 13%."},
+    {img:"f16_3", m:1, x:5, q:"Sabrosa tarro: el cliente lo compra a Bs 21,80 y el PVP es Bs 23. ¿Margen del cliente sobre el PVP?", o:["≈5%","≈10%","≈1%","≈15%"], e:"(23 − 21,80) ÷ 23 ≈ 5,2%."},
+    {ic:"money", m:1, x:5, q:"Oval: compra Bs 24,80 y PVP Bs 26. Tarro: compra Bs 21,80 y PVP Bs 23. ¿Cuál deja mejor margen % al cliente?", o:["El tarro","El oval","Igual","Ninguno"], e:"Los dos dejan Bs 1,20, pero el tarro sobre un PVP menor: ≈5,2% vs. ≈4,6%."},
+    {img:"f16_3", m:1, q:"Una caja de 24 Sabrosa tarro le cuesta al cliente Bs 21,80 por lata. ¿Cuánto gana por caja vendiendo a Bs 23?", o:["Bs 28,80","Bs 24","Bs 1,20","Bs 36"], e:"24 × Bs 1,20 = Bs 28,80."},
+    {img:"f16_4", m:1, x:5, q:"Sabrosa oval: el cliente lo compra a Bs 24,80 y el PVP es Bs 26. ¿Margen del cliente sobre el PVP?", o:["≈4,6%","≈8%","≈1%","≈12%"], e:"(26 − 24,80) ÷ 26 ≈ 4,6%."}
   ],
   gestion: [
     {ic:"truck", q:"Estás en 1.000 tiendas de un universo de 4.000. ¿Cuál es tu cobertura?", o:["25%","40%","4%","75%"], e:"1.000 ÷ 4.000 = 25%."},
@@ -693,6 +737,7 @@ const QUESTIONS_HARD = {
     {ic:"box", q:"Vendiste 210 cajas con la promo 20+1. ¿Cuántas cajas regalaste?", o:["10","21","20","5"], e:"210 ÷ 21 = 10."},
     {ic:"chart", x:5, q:"Mercado de 1.000 t y vendes 400 t. Si el mercado sube a 1.200 t y sigues en 400 t, ¿cuál es tu nuevo share?", o:["≈33%","40%","≈48%","≈20%"], e:"400 ÷ 1.200 ≈ 33% (antes 40%)."}
   ]
+
 };
 
 
@@ -702,16 +747,16 @@ const CASTIGOS_HARD = [
    o:["No bajar: proteger la rentabilidad","Bajar a Bs 12","Bajar a Bs 11","Bajar a Bs 10,50"], e:"A Bs 12 el margen cae de Bs 2 a Bs 1 (−50%): tendrías que vender el doble. A Bs 11 o menos ganas cero o pierdes."},
   {type:"mc", t:"¡Nuestro cliente se va a la competencia!", reto:"Le ofrecen más descuento. Le vendemos a Bs 13, nuestro costo es Bs 11 y queremos ganar al menos Bs 1. ¿Cuál es el descuento máximo?",
    f:"Descuento máximo = (Precio − Costo − Ganancia mínima) ÷ Precio", o:["≈7,7%","≈15,4%","10%","≈2%"], e:"(13 − 11 − 1) ÷ 13 ≈ 7,7%. Con 15,4% ganarías cero."},
-  {type:"mc", t:"¡El contrabando crece por el tipo de cambio!", reto:"La lejía de contrabando se vende a Bs 10 y la nuestra de 1 L a Bs 13. ¿Qué tan más cara es la nuestra?",
-   f:"Diferencia % = (Nuestro precio − Precio contrabando) ÷ Precio contrabando", o:["30%","≈23%","3%","13%"], e:"(13 − 10) ÷ 10 = 30%. Esa brecha se defiende con marca registrada y 5,9% de concentración, no bajando precio."},
+  {type:"mc", t:"¡El contrabando crece por el tipo de cambio!", reto:"Supongamos que un aceite de contrabando de 900 ml se vende a Bs 15 y Fino Clásico 900 ml tiene PVP de Bs 18,50. ¿Qué tan más caro es Fino?",
+   f:"Diferencia % = (Nuestro precio − Precio contrabando) ÷ Precio contrabando", o:["≈23%","≈19%","3,5%","35%"], e:"(18,50 − 15) ÷ 15 ≈ 23%. (≈19% sería dividir entre 18,50, el precio equivocado.)"},
   {type:"mc", t:"¡El cliente pide su escala de descuento!", reto:"Escala: 1–9 cajas 0% · 10–49 cajas 2% · 50 o más 4%. Compra 50 cajas a Bs 120 cada una. ¿Cuánto paga?",
    f:"Total = Cajas × Precio × (1 − Descuento)", o:["Bs 5.760","Bs 5.880","Bs 6.000","Bs 5.520"], e:"50 × 120 = Bs 6.000 × 0,96 = Bs 5.760."},
   {type:"mc", t:"¡La promo se comió el margen!", reto:"Precio Bs 13, costo Bs 11. Diste 10% de descuento. ¿Cuánto ganas por unidad ahora?",
    o:["Bs 0,70","Bs 1,00","Bs 2,00","Pierdes plata"], e:"13 × 0,90 = Bs 11,70 − Bs 11 = Bs 0,70 (antes Bs 2)."},
   {type:"mc", t:"¡El distribuidor está lleno de stock!", reto:"Tiene 6.000 cajas en bodega y vende 1.500 al mes. ¿Cuántos meses de inventario tiene?",
    f:"Meses de inventario = Stock ÷ Venta mensual", o:["4 meses","3 meses","6 meses","1,5 meses"], e:"6.000 ÷ 1.500 = 4 meses: no va a comprar en un buen rato."},
-  {type:"mc", t:"¡Cargaste mal los precios y hay refacturación!", reto:"Facturaste 300 lejías de 1 L a Bs 11 en vez de Bs 13. ¿Cuánto hay que refacturar?",
-   o:["Bs 600","Bs 300","Bs 3.900","Bs 3.300"], e:"(13 − 11) × 300 = Bs 600."},
+  {type:"mc", t:"¡Cargaste mal los precios y hay refacturación!", reto:"Facturaste 300 lejías de 1 L a Bs 9 en vez de su precio de lista de Bs 11. ¿Cuánto hay que refacturar?",
+   o:["Bs 600","Bs 300","Bs 2.700","Bs 3.300"], e:"(11 − 9) × 300 = Bs 600."},
   {type:"mc", t:"¡Cierre de mes y faltan toneladas!", reto:"Te faltan 12 toneladas para la meta y cada caja pesa 20 kg. ¿Cuántas cajas tienes que vender?",
    f:"Cajas = Toneladas × 1.000 ÷ kg por caja", o:["600","240","1.200","60"], e:"12 × 1.000 = 12.000 kg ÷ 20 = 600 cajas."},
   {type:"mc", t:"¡Te piden elegir la promo!", reto:"¿Qué le cuesta más a la categoría: una bonificación 20+1 o un 5% de descuento?",
@@ -725,123 +770,6 @@ const CASTIGOS_HARD = [
 
 
 
-
-// ---------- Preguntas extra de producto (Price List · Precios SKU) ----------
-const _EXTRA = {
-  lejia: [
-    {img:"h2_0", q:"¿Cuántas lejías Sapolio de 1 L trae una caja?", o:["12","6","24","4"], e:"La lejía de 1 L viene en caja de 12 unidades."},
-    {img:"h2_1", m:1, q:"Lejía 1,89 L: el cliente la compra a Bs 21,10 y la vende a Bs 24. ¿Cuánto gana?", o:["Bs 2,90","Bs 3,10","Bs 1,90","Bs 2,10"], e:"Bs 24 − Bs 21,10 = Bs 2,90."},
-    {img:"h2_2", q:"¿Cuál es el PVP de la lejía Sapolio de 3,8 L?", o:["Bs 40","Bs 47","Bs 37","Bs 35"], e:"Lejía: 1 L Bs 13 · 1,89 L Bs 24 · 3,8 L Bs 40 · 4,7 L Bs 47."}
-  ],
-  lava: [
-    {img:"h4_0", m:1, q:"Lavavajillas en crema 1 kg: el cliente lo compra a Bs 16,10 y lo vende a Bs 19. ¿Cuánto gana?", o:["Bs 2,90","Bs 3,90","Bs 1,90","Bs 2,10"], e:"Bs 19 − Bs 16,10 = Bs 2,90."},
-    {img:"h4_3", q:"¿Cuál es el PVP del lavavajillas líquido Sapolio de 500 ml?", o:["Bs 11","Bs 13","Bs 9","Bs 16"], e:"Líquido: 500 ml Bs 11 · 750 ml Bs 16 · 1,25 L Bs 20 · 5 L Bs 65."},
-    {img:"h4_1", q:"¿Cuántos lavavajillas de 5 L trae una caja?", o:["4","6","12","2"], e:"El formato de 5 L viene de a 4 por caja."}
-  ],
-  limpia: [
-    {img:"h6_14", m:1, q:"Limpia Todo 1,8 L: el cliente lo compra a Bs 21,73 y lo vende a Bs 25. ¿Cuánto gana?", o:["≈Bs 3,30","≈Bs 2,30","≈Bs 4,30","≈Bs 1,30"], e:"Bs 25 − Bs 21,73 = Bs 3,27."},
-    {img:"h6_14", q:"¿Cuál es el PVP del Limpia Todo de 4,9 L?", o:["Bs 60","Bs 53","Bs 65","Bs 75"], e:"Limpia Todo: 900 ml Bs 15 · 1,8 L Bs 25 · 4,9 L Bs 60."}
-  ],
-  ambi: [
-    {img:"h8_7", q:"¿Cuánto contenido trae el ambientador Sapolio en spray?", o:["360 ml","250 ml","500 ml","400 ml"], e:"Ambientador e insecticida Sapolio: 360 ml."},
-    {img:"h10_2", m:1, q:"Una caja trae 12 insecticidas a Bs 14,20 cada uno. ¿Cuánto paga el cliente por la caja?", o:["Bs 170,40","Bs 142","Bs 204","Bs 168"], e:"12 × Bs 14,20 = Bs 170,40."}
-  ],
-  bolivar: [
-    {img:"s3_8", q:"¿Cuál es el PVP de Bolívar en polvo de 2 kg?", o:["Bs 47","Bs 42","Bs 52","Bs 38"], e:"Bolívar: 700 g Bs 21 · 2 kg Bs 47 · 3,8 kg Bs 78."},
-    {img:"s3_8", m:1, q:"Bolívar 3,8 kg: el cliente lo compra a Bs 71,70 y lo vende a Bs 78. ¿Cuánto gana?", o:["Bs 6,30","Bs 7,30","Bs 5,70","Bs 8,30"], e:"Bs 78 − Bs 71,70 = Bs 6,30."},
-    {img:"s3_8", q:"Bolívar líquido: frasco de 1,9 L a Bs 63 y Doy Pack de 3 L a Bs 85. ¿Cuántos bolivianos más cuesta el Doy Pack?", o:["Bs 22","Bs 12","Bs 32","Bs 20"], e:"Bs 85 − Bs 63 = Bs 22, por 1,1 L más de producto."},
-    {img:"s3_4", q:"¿Cuál es el PVP del jabón de lavar Bolívar de 190 g?", o:["Bs 7","Bs 6","Bs 5","Bs 9"], e:"Jabón Bolívar 190 g: PVP Bs 7, caja de 48 barras."}
-  ],
-  opal: [
-    {img:"s5_5", q:"¿Cuál es el PVP de Opal de 1,8 kg?", o:["Bs 42","Bs 47","Bs 37","Bs 39"], e:"Opal: 650 g Bs 17 · 1,8 kg Bs 42 · 3,5 kg Bs 69."},
-    {img:"s5_5", m:1, q:"Opal Ultra 3,5 kg: el cliente lo compra a Bs 61,65 y lo vende a Bs 69. ¿Cuánto gana?", o:["Bs 7,35","Bs 8,35","Bs 6,65","Bs 9,35"], e:"Bs 69 − Bs 61,65 = Bs 7,35."}
-  ],
-  uno: [
-    {img:"s6_3", q:"¿Cuál es el PVP de UNO en polvo de 4,7 kg?", o:["Bs 90","Bs 82","Bs 94","Bs 85"], e:"UNO: 620 g Bs 14 · 650 g Bs 15 · 1,8 kg Bs 37 · 4,7 kg Bs 90 · 9,2 kg Bs 165."},
-    {img:"s6_5", m:1, q:"UNO 650 g: el cliente lo compra a Bs 13,13 y lo vende a Bs 15. ¿Cuánto gana?", o:["Bs 1,87","Bs 2,13","Bs 1,13","Bs 2,87"], e:"Bs 15 − Bs 13,13 = Bs 1,87."},
-    {img:"s6_5", q:"¿Cuál es el PVP del jabón de lavar UNO de 190 g?", o:["Bs 6","Bs 7","Bs 4,50","Bs 3"], e:"Jabón UNO 190 g: PVP Bs 6 (el de Bolívar, Bs 7)."}
-  ],
-  patito: [
-    {img:"s8_6", q:"¿Cuántos sachets de Patito 130 g trae una caja?", o:["60","48","24","100"], e:"Patito 130 g viene en caja de 60 unidades."},
-    {img:"s8_5", m:1, q:"Patito 500 g: el cliente lo compra a Bs 7,78 y lo vende a Bs 9. ¿Cuánto gana?", o:["Bs 1,22","Bs 1,78","Bs 0,78","Bs 2,22"], e:"Bs 9 − Bs 7,78 = Bs 1,22."},
-    {img:"s8_5", q:"El Tripack Patito trae 3 bolsas de 4,7 kg. ¿Cuántos kilos son en total?", o:["14,1 kg","12 kg","9,4 kg","15 kg"], e:"3 × 4,7 kg = 14,1 kg."}
-  ],
-  finoc: [
-    {img:"f4_9", q:"¿Cuántas botellas de Fino Clásico 900 ml trae una caja?", o:["12","24","6","8"], e:"900 ml: caja de 12. 450 ml: caja de 24."},
-    {img:"f4_8", q:"¿Cuál es el PVP del bidón Fino Clásico de 4,5 L?", o:["Bs 92,50","Bs 90","Bs 110","Bs 85"], e:"Fino Clásico 4,5 L: lista Bs 90, PVP Bs 92,50."},
-    {img:"f4_8", m:1, q:"Fino Clásico 1,8 L: el cliente lo compra a Bs 35,50 y lo vende a Bs 37. ¿Cuánto gana?", o:["Bs 1,50","Bs 2,50","Bs 0,50","Bs 1"], e:"Bs 37 − Bs 35,50 = Bs 1,50."}
-  ],
-  finol: [
-    {img:"f2_3", m:1, q:"Fino Light 900 ml: el cliente lo compra a Bs 22,40 y lo vende a Bs 24. ¿Cuánto gana?", o:["Bs 1,60","Bs 2,40","Bs 0,60","Bs 1,40"], e:"Bs 24 − Bs 22,40 = Bs 1,60."},
-    {img:"f5_4", q:"¿Cuál es el PVP de Fino Light 1,8 L?", o:["Bs 46","Bs 43","Bs 37","Bs 48"], e:"Fino Light: 900 ml Bs 24 · 1,8 L Bs 46 · 4,5 L Bs 110."}
-  ],
-  pastas: [
-    {img:"f10_3", q:"¿Cuántos paquetes de Don Vittorio 400 g (codo, rigatoni, espirales) trae una caja?", o:["12","24","6","20"], e:"Los cortos de 400 g vienen de a 12 por caja."},
-    {img:"f10_1", m:1, q:"El Fettuccini Don Vittorio 400 g viene en caja de 20 a Bs 145. ¿Cuánto le cuesta cada paquete al cliente?", o:["Bs 7,25","Bs 7,50","Bs 6,25","Bs 9"], e:"Bs 145 ÷ 20 = Bs 7,25 (y lo vende a Bs 9)."}
-  ],
-  salsas: [
-    {img:"f13_1", m:1, q:"Salsa Don Vittorio 400 g: el cliente la compra a Bs 14,50 y la vende a Bs 16. ¿Cuánto gana?", o:["Bs 1,50","Bs 2,50","Bs 1","Bs 0,50"], e:"Bs 16 − Bs 14,50 = Bs 1,50."},
-    {img:"f13_1", q:"¿Cuántas salsas Don Vittorio trae una caja?", o:["12","24","6","10"], e:"200 g y 400 g vienen en caja de 12."}
-  ],
-  conservas: [
-    {img:"f16_3", q:"¿Cuántos gramos trae una lata de Sabrosa, tarro u oval?", o:["425 g","400 g","170 g","500 g"], e:"Tarro y oval: 425 g."},
-    {img:"f16_4", q:"¿Cuántas latas de Sabrosa 425 g trae una caja?", o:["24","12","48","6"], e:"Caja de 24 latas."},
-    {img:"f16_4", q:"¿Cuál es el PVP de Sabrosa oval 425 g?", o:["Bs 26","Bs 23","Bs 24,80","Bs 28"], e:"Oval Bs 26 · tarro Bs 23."}
-  ]
-};
-const _EXTRA_HARD = {
-  lejia: [
-    {img:"h2_2", m:1, x:5, q:"La caja de 4 lejías de 3,8 L cuesta Bs 148 y el PVP es Bs 40. ¿Margen del cliente sobre el PVP?", o:["7,5%","10%","3%","12%"], e:"Bs 148 ÷ 4 = Bs 37. (40 − 37) ÷ 40 = 7,5%."},
-    {img:"h2_1", m:1, q:"El cliente vende las 12 lejías de 1 L de una caja (Bs 132) a Bs 13 cada una. ¿Cuánto gana por caja?", o:["Bs 24","Bs 12","Bs 156","Bs 20"], e:"12 × Bs 13 = Bs 156. Bs 156 − Bs 132 = Bs 24."}
-  ],
-  lava: [
-    {img:"h4_0", m:1, x:5, q:"Lavavajillas en crema 1 kg: caja de 6 a Bs 96,60 y PVP Bs 19. ¿Margen del cliente sobre el PVP?", o:["≈15%","≈10%","≈19%","≈3%"], e:"Bs 96,60 ÷ 6 = Bs 16,10. (19 − 16,10) ÷ 19 ≈ 15%."},
-    {img:"h4_3", m:1, x:5, q:"Lavavajillas 500 ml a Bs 11 y 750 ml a Bs 16. ¿Cuál sale más barato por litro?", o:["El de 750 ml (≈Bs 21,33/L)","El de 500 ml (Bs 22/L)","Salen igual","No se puede saber"], e:"500 ml: Bs 22/L. 750 ml: ≈Bs 21,33/L. Por poco gana el 750 ml."}
-  ],
-  limpia: [
-    {img:"h6_14", m:1, x:5, q:"Limpia Todo 4,9 L: precio de lista Bs 53,58 y PVP Bs 60. ¿Margen del cliente sobre el PVP?", o:["≈11%","≈6%","≈15%","≈20%"], e:"(60 − 53,58) ÷ 60 ≈ 10,7%."}
-  ],
-  ambi: [
-    {img:"h8_7", m:1, q:"El cliente compra una caja de 12 ambientadores a Bs 14 y los vende a Bs 16. ¿Cuánto gana por caja?", o:["Bs 24","Bs 2","Bs 168","Bs 12"], e:"12 × Bs 2 = Bs 24."}
-  ],
-  bolivar: [
-    {img:"s3_8", m:1, x:5, q:"Bolívar 700 g a Bs 21 y 2 kg a Bs 47. ¿Cuánto ahorra por kilo quien compra el de 2 kg?", o:["Bs 6,50","Bs 3,50","Bs 9","Nada"], e:"700 g: Bs 30/kg. 2 kg: Bs 23,50/kg. Ahorro: Bs 6,50 por kilo."},
-    {img:"s3_8", m:1, q:"Bolívar 3,8 kg: la caja de 4 cuesta Bs 286,80 y el PVP es Bs 78. ¿Cuánto gana el cliente por caja?", o:["Bs 25,20","Bs 6,30","Bs 31,20","Bs 18,20"], e:"4 × Bs 78 = Bs 312. Bs 312 − Bs 286,80 = Bs 25,20."},
-    {img:"s3_8", m:1, x:5, q:"Suavizante Bolívar: 2,8 L a Bs 68 y 5 L a Bs 108. ¿Cuánto más barato sale el litro del de 5 L?", o:["≈Bs 2,70","≈Bs 1","≈Bs 5","Nada"], e:"2,8 L: ≈Bs 24,29/L. 5 L: Bs 21,60/L. Diferencia ≈ Bs 2,70."}
-  ],
-  opal: [
-    {img:"s5_5", m:1, x:5, q:"Opal 650 g a Bs 17 y 3,5 kg a Bs 69. ¿Cuánto ahorra por kilo quien compra el grande?", o:["≈Bs 6,40","≈Bs 3,20","≈Bs 10","Nada"], e:"650 g: ≈Bs 26,15/kg. 3,5 kg: ≈Bs 19,71/kg. Ahorro ≈ Bs 6,40."},
-    {img:"s5_5", m:1, x:5, q:"Opal 1,8 kg: precio de lista Bs 38,92 y PVP Bs 42. ¿Margen del cliente sobre el PVP?", o:["≈7%","≈3%","≈12%","≈18%"], e:"(42 − 38,92) ÷ 42 ≈ 7,3%."}
-  ],
-  uno: [
-    {img:"s6_3", m:1, x:5, q:"UNO 4,7 kg a Bs 90 y 4,8 kg a Bs 94. ¿Cuál sale más barato por kilo?", o:["El de 4,7 kg","El de 4,8 kg","Salen igual","No se puede saber"], e:"4,7 kg: ≈Bs 19,15/kg. 4,8 kg: ≈Bs 19,58/kg."},
-    {img:"s6_5", m:1, q:"Jabón UNO 190 g: el cliente lo compra a Bs 4,50 y lo vende a Bs 6. ¿Margen sobre el PVP?", o:["25%","33%","15%","50%"], e:"(6 − 4,50) ÷ 6 = 25%."}
-  ],
-  patito: [
-    {img:"s8_5", m:1, q:"El Tripack Patito (3 × 4,7 kg) cuesta Bs 190 y cada bolsa suelta Bs 85. ¿Cuánto ahorra el consumidor con el Tripack?", o:["Bs 65","Bs 30","Bs 85","Bs 105"], e:"3 × Bs 85 = Bs 255. Bs 255 − Bs 190 = Bs 65."},
-    {img:"s8_5", m:1, x:5, q:"Patito 500 g: precio de lista Bs 7,78 y PVP Bs 9. ¿Margen del cliente sobre el PVP?", o:["≈14%","≈9%","≈22%","≈1%"], e:"(9 − 7,78) ÷ 9 ≈ 13,6%."}
-  ],
-  finoc: [
-    {img:"f4_9", m:1, q:"El cliente compra una caja de 12 Fino Clásico 900 ml a Bs 18 y los vende a Bs 18,50. ¿Cuánto gana por caja?", o:["Bs 6","Bs 0,50","Bs 12","Bs 9"], e:"12 × Bs 0,50 = Bs 6."},
-    {img:"f4_8", m:1, x:5, q:"Fino Clásico 450 ml a Bs 9,50 y 4,5 L a Bs 92,50. ¿Cuánto más barato sale el litro del bidón?", o:["≈Bs 0,55","≈Bs 2","≈Bs 5","Nada"], e:"450 ml: ≈Bs 21,11/L. 4,5 L: ≈Bs 20,56/L. Diferencia ≈ Bs 0,55."}
-  ],
-  finol: [
-    {img:"f5_4", m:1, x:5, q:"Fino Light 4,5 L: precio de lista Bs 106,10 y PVP Bs 110. ¿Margen del cliente sobre el PVP?", o:["≈3,5%","≈6%","≈1%","≈10%"], e:"(110 − 106,10) ÷ 110 ≈ 3,5%."},
-    {img:"f2_3", m:1, x:5, q:"Fino Light 900 ml: precio de lista Bs 22,40 y PVP Bs 24. ¿Margen del cliente sobre el PVP?", o:["≈6,7%","≈4%","≈10%","≈16%"], e:"(24 − 22,40) ÷ 24 ≈ 6,7%."}
-  ],
-  pastas: [
-    {img:"f10_1", m:1, q:"El Spaghetti Don Vittorio 400 g viene en caja de 24 a Bs 174 y el PVP es Bs 9. ¿Cuánto gana el cliente por caja?", o:["Bs 42","Bs 24","Bs 18","Bs 54"], e:"24 × Bs 9 = Bs 216. Bs 216 − Bs 174 = Bs 42."}
-  ],
-  salsas: [
-    {img:"f13_1", m:1, q:"El cliente compra una caja de 12 salsas de 400 g a Bs 14,50 y las vende a Bs 16. ¿Cuánto gana por caja?", o:["Bs 18","Bs 12","Bs 24","Bs 1,50"], e:"12 × Bs 1,50 = Bs 18."},
-    {img:"f13_1", m:1, x:5, q:"Salsa 400 g: precio de lista Bs 14,50 y PVP Bs 16. ¿Margen del cliente sobre el PVP?", o:["≈9%","≈12%","≈6%","≈15%"], e:"(16 − 14,50) ÷ 16 ≈ 9,4%."}
-  ],
-  conservas: [
-    {img:"f16_3", m:1, q:"Una caja de 24 Sabrosa tarro le cuesta al cliente Bs 21,80 por lata. ¿Cuánto gana por caja vendiendo a Bs 23?", o:["Bs 28,80","Bs 24","Bs 1,20","Bs 36"], e:"24 × Bs 1,20 = Bs 28,80."}
-  ]
-};
-for (const k in _EXTRA) QUESTIONS[k].push(..._EXTRA[k]);
-for (const k in _EXTRA_HARD) QUESTIONS_HARD[k].push(..._EXTRA_HARD[k]);
 
 // Tablero 6x6: 20 casillas, inicia abajo a la derecha, sentido horario. 6 crisis (30%).
 const SQUARES = [
